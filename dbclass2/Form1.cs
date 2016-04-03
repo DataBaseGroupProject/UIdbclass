@@ -88,5 +88,10 @@ namespace dbclass2
         {
             MessageBox.Show("Table labeling has been changed");
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
