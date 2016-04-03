@@ -23,8 +23,7 @@ namespace dbclass2
 
     public partial class Form1 : Form
     {
-
-        
+        private DataGridView dataGridView1 = new DataGridView();
         private BindingSource bindingSource1 = new BindingSource();
         private SqlDataAdapter dataAdapter = new SqlDataAdapter();
         private Button reloadButton = new Button();
@@ -42,17 +41,6 @@ namespace dbclass2
             string[] myTables2 = { "DoctorID", "First Name", "Last Name", "OfficeAddress" };
             checkedListBox2.Items.AddRange(myTables2);
 
-
-
-
-
-
-
-            // Changes the selection mode from double-click to single click.
-            checkedListBox1.CheckOnClick = true;
-            checkedListBox1.CheckOnClick = true;
-
-            InitializeMyControl();
 
 
             dataGridView1.Dock = DockStyle.Fill;
@@ -74,19 +62,14 @@ namespace dbclass2
 
 
 
+            // Changes the selection mode from double-click to single click.
+            checkedListBox1.CheckOnClick = true;
+            checkedListBox1.CheckOnClick = true;
+
+            InitializeMyControl();
+           
         }
 
-
-
-        private void InitializeMyControl()
-        {
-            // Set to no text.
-            textBox4.Text = "";
-            // The password character is an asterisk.
-            textBox4.PasswordChar = '*';
-            // The control will allow no more than 14 characters.
-            textBox4.MaxLength = 14;
-        }
 
         private void Form1_Load(object sender, System.EventArgs e)
         {
@@ -96,9 +79,7 @@ namespace dbclass2
             GetData("select * from Customers");
         }
 
-
-
-        private void reloadButton_Click(object sender, System.EventArgs e)
+            private void reloadButton_Click(object sender, System.EventArgs e)
         {
             // Reload the data from the database.
             GetData(dataAdapter.SelectCommand.CommandText);
@@ -108,40 +89,6 @@ namespace dbclass2
         {
             // Update the database with the user's changes.
             dataAdapter.Update((DataTable)bindingSource1.DataSource);
-        }
-
-
-
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Tables have been transferred");
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-            try
-            {
-                DataAccess.Connect();
-                List<string> results = DataAccess.GetTableName();
-                foreach (var item in results)
-                {
-                    checkedListBox1.Items.Add(item);
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("You are not connected!");
-                
-            }
-
         }
 
         private void GetData(string selectCommand)
@@ -156,7 +103,7 @@ namespace dbclass2
                     "Initial Catalog=Northwind;Data Source=localhost";
 
                 // Create a new data adapter based on the specified query.
-               SqlDataAdapter dataAdapter = new SqlDataAdapter(selectCommand, connectionString);
+                dataAdapter = new SqlDataAdapter(selectCommand, connectionString);
 
                 // Create a command builder to generate SQL update, insert, and
                 // delete commands based on selectCommand. These are used to
@@ -181,12 +128,52 @@ namespace dbclass2
             }
         }
 
-    
+
+
+        private void InitializeMyControl()
+        {
+            // Set to no text.
+            textBox4.Text = "";
+            // The password character is an asterisk.
+            textBox4.PasswordChar = '*';
+            // The control will allow no more than 14 characters.
+            textBox4.MaxLength = 14;
+        }
+
+
+       
 
 
 
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
 
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Tables have been transferred");
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataAccess.Connect();
+
+                List<string> results = DataAccess.GetTableName();
+
+                foreach (var item in results)
+                {
+                    checkedListBox1.Items.Add(item);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("You are connected!");
+            }
+        }
         private void button3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Fields have been transferred");
@@ -194,12 +181,7 @@ namespace dbclass2
 
         private void button4_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Table labeling has been modified");
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
+            MessageBox.Show("Table labeling has been changed");
         }
     }
 }
