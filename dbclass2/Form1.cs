@@ -194,7 +194,7 @@ namespace dbclass2
 
         private void button4_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Table labeling has been changed");
+            MessageBox.Show("Table labeling has been modified");
         }
 
         private void label1_Click(object sender, EventArgs e)
