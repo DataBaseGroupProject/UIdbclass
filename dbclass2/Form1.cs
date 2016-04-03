@@ -76,6 +76,15 @@ namespace dbclass2
 
         private void button1_Click(object sender, EventArgs e)
         {
+            DataAccess.Connect();
+
+            List<string> results = DataAccess.GetTableName();
+
+            foreach(var item in results)
+            {
+                checkedListBox1.Items.Add(item);
+            }
+
             MessageBox.Show("You are connected!");
         }
 
