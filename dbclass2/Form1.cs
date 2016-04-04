@@ -38,9 +38,7 @@ namespace dbclass2
             // Sets up the initial objects in the CheckedListBox.
             string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
             checkedListBox1.Items.AddRange(myTables);
-            string[] myTables2 = { "DoctorID", "First Name", "Last Name", "OfficeAddress" };
-            checkedListBox2.Items.AddRange(myTables2);
-
+            
 
 
             dataGridView1.Dock = DockStyle.Fill;
@@ -51,7 +49,7 @@ namespace dbclass2
             submitButton.Click += new System.EventHandler(submitButton_Click);
 
             FlowLayoutPanel panel = new FlowLayoutPanel();
-            panel.Dock = DockStyle.Top;
+            panel.Dock = DockStyle.Bottom;
             panel.AutoSize = true;
             panel.Controls.AddRange(new Control[] { reloadButton, submitButton });
 
@@ -76,7 +74,7 @@ namespace dbclass2
             // Bind the DataGridView to the BindingSource
             // and load the data from the database.
             dataGridView1.DataSource = bindingSource1;
-            GetData("select * from Customers");
+            GetData("select * from Doctors");
         }
 
             private void reloadButton_Click(object sender, System.EventArgs e)
@@ -98,9 +96,7 @@ namespace dbclass2
                 // Specify a connection string. Replace the given value with a 
                 // valid connection string for a Northwind SQL Server sample
                 // database accessible to your system.
-                String connectionString =
-                    "Integrated Security=SSPI;Persist Security Info=False;" +
-                    "Initial Catalog=Northwind;Data Source=localhost";
+                String connectionString = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 // Create a new data adapter based on the specified query.
                 dataAdapter = new SqlDataAdapter(selectCommand, connectionString);
@@ -176,7 +172,7 @@ namespace dbclass2
         }
         private void button3_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Fields have been transferred");
+            MessageBox.Show("Tables have been transferred");
         }
 
         private void button4_Click(object sender, EventArgs e)
