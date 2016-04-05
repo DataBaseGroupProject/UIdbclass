@@ -25,19 +25,7 @@ namespace dbclass2
         public Form1()
         {
             InitializeComponent();
-
-            // Sets up the initial objects in the CheckedListBox.
-            string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
-            checkedListBox1.Items.AddRange(myTables);
-            string[] myTables2 = { "DoctorID", "First Name", "Last Name", "OfficeAddress" };
-            checkedListBox2.Items.AddRange(myTables2);
-
-
-
-
             
-
-
             // Changes the selection mode from double-click to single click.
             checkedListBox1.CheckOnClick = true;
             checkedListBox1.CheckOnClick = true;
@@ -72,6 +60,10 @@ namespace dbclass2
         {
             MessageBox.Show("Tables have been transferred");
 
+            DimensionalTableInfo dt = new DimensionalTableInfo();
+
+            DataAccess.CreateDimenstionalTable(dt);
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -96,6 +88,12 @@ namespace dbclass2
         private void button4_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Table labeling has been changed");
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
