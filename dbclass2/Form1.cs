@@ -68,16 +68,35 @@ namespace dbclass2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DataAccess.Connect("localhost:1521/xe", "system", "admin");
-
-            List<string> results = DataAccess.GetTableName();
-
-            foreach(var item in results)
+            try
             {
-                checkedListBox1.Items.Add(item);
-            }
+                DataAccess.Connect(txtDB.Text, txtUserName.Text, txtPassword.Text);
 
-            MessageBox.Show("You are connected!");
+                List<string> results = DataAccess.GetTableName();
+
+                foreach (var item in results)
+                {
+                    checkedListBox1.Items.Add(item);
+                }
+
+                MessageBox.Show("You are connected!");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid User Name/Password");
+                ClearTableNamesList();
+            }
+        }
+
+        private void ClearTableNamesList()
+        {
+            if (checkedListBox1.Items.Count > 0)
+            {
+                for (int i = checkedListBox1.Items.Count - 1; i >= 0; i--)
+                {
+                    checkedListBox1.Items.RemoveAt(i);
+                }
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)

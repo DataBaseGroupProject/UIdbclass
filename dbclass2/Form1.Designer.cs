@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtDB = new System.Windows.Forms.TextBox();
+            this.txtUserName = new System.Windows.Forms.TextBox();
+            this.txtPassword = new System.Windows.Forms.TextBox();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
@@ -40,30 +40,32 @@
             this.button4 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // textBox1
+            // txtDB
             // 
-            this.textBox1.Location = new System.Drawing.Point(4, 23);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(196, 31);
-            this.textBox1.TabIndex = 0;
+            this.txtDB.Location = new System.Drawing.Point(4, 23);
+            this.txtDB.Margin = new System.Windows.Forms.Padding(6);
+            this.txtDB.Name = "txtDB";
+            this.txtDB.Size = new System.Drawing.Size(196, 31);
+            this.txtDB.TabIndex = 0;
             // 
-            // textBox2
+            // txtUserName
             // 
-            this.textBox2.Location = new System.Drawing.Point(4, 73);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(196, 31);
-            this.textBox2.TabIndex = 1;
+            this.txtUserName.Location = new System.Drawing.Point(4, 73);
+            this.txtUserName.Margin = new System.Windows.Forms.Padding(6);
+            this.txtUserName.Name = "txtUserName";
+            this.txtUserName.Size = new System.Drawing.Size(196, 31);
+            this.txtUserName.TabIndex = 1;
             // 
-            // textBox3
+            // txtPassword
             // 
-            this.textBox3.Location = new System.Drawing.Point(4, 123);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(6);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(196, 31);
-            this.textBox3.TabIndex = 2;
-            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            this.txtPassword.Location = new System.Drawing.Point(4, 123);
+            this.txtPassword.Margin = new System.Windows.Forms.Padding(6);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.PasswordChar = '*';
+            this.txtPassword.Size = new System.Drawing.Size(196, 31);
+            this.txtPassword.TabIndex = 2;
+            this.txtPassword.UseSystemPasswordChar = true;
+            this.txtPassword.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // checkedListBox1
             // 
@@ -147,9 +149,9 @@
             this.Controls.Add(this.checkedListBox2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.checkedListBox1);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.txtPassword);
+            this.Controls.Add(this.txtUserName);
+            this.Controls.Add(this.txtDB);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -161,9 +163,9 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox txtDB;
+        private System.Windows.Forms.TextBox txtUserName;
+        private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckedListBox checkedListBox2;
