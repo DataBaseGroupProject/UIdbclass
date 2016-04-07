@@ -70,7 +70,10 @@ namespace dbclass2
         {
             try
             {
-                DataAccess.Connect(txtDB.Text, txtUserName.Text, txtPassword.Text);
+                //Humam - We need to enable this for the demo
+                //DataAccess.Connect(txtDB.Text, txtUserName.Text, txtPassword.Text);
+                //For Testing it's ok to use this
+                DataAccess.Connect();
 
                 List<string> results = DataAccess.GetTableName();
 
