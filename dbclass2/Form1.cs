@@ -68,7 +68,7 @@ namespace dbclass2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DataAccess.Connect();
+            DataAccess.Connect("localhost:1521/xe", "system", "admin");
 
             List<string> results = DataAccess.GetTableName();
 
