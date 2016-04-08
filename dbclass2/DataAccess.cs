@@ -216,21 +216,25 @@ namespace dbclass2
 
             string pk = string.Empty;
 
-
             //Humam- Testing Code
             //---------------------
             Table = new FactTableInfo();
 
-            Table.TableName = "DOC";
+            Table.TableName = "ABC";
 
             Table.PrimaryKeys = new Dictionary<string, string>();
 
-            Table.PrimaryKeys.Add("PID", "Int");
+            Table.PrimaryKeys.Add("Dir", "Int");
 
             Table.Columns = new Dictionary<string, string>();
 
-            Table.Columns.Add("Col1", "Int");
-            Table.Columns.Add("Col2", "Varchar(50)");
+            Table.Columns.Add("Col3", "Int");
+            Table.Columns.Add("PID", "Int");
+
+            Table.Relations = new Dictionary<string, string>();
+
+            Table.Relations.Add("DOC", "PID");
+
             //---------------------
 
             try
@@ -262,9 +266,14 @@ namespace dbclass2
                     sb.AppendLine(item.Key + " " + item.Value + ",");
                 }
 
+                foreach (var item in Table.Relations)
+                {
+                    sb.AppendLine(" CONSTRAINT " + item.Key + "_FK FOREIGN KEY (" + item.Value + ") REFERENCES " + item.Key + "("+ item.Value +"),");
+                }
+
                 pk = pk.TrimEnd(',');
 
-                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ") ");
+                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ")");
 
                 sb.AppendLine((")"));
 
