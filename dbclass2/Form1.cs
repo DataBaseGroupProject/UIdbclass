@@ -76,7 +76,7 @@ namespace dbclass2
         {
             try
             {
-                DataAccess.Connect(txtDB.Text, txtUserName.Text, txtPassword.Text);
+                DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
 
                 List<string> results = DataAccess.GetTableName();
 
@@ -93,6 +93,16 @@ namespace dbclass2
                 ClearTableNamesList();
             }
         }
+
+        private void ClearTableNamesList()
+        {
+            if (checkedListBox1.Items.Count > 0)
+            {
+                for (int i = checkedListBox1.Items.Count - 1; i >= 0; i--)
+                {
+                    checkedListBox1.Items.RemoveAt(i);
+                }
+            }
 
 
 
