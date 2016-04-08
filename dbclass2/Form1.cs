@@ -25,7 +25,12 @@ namespace dbclass2
         public Form1()
         {
             InitializeComponent();
-            
+
+            // Sets up the initial objects in the CheckedListBox.
+            /*string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
+            checkedListBox1.Items.AddRange(myTables);
+            string[] myTables2 = { "DoctorID", "First Name", "Last Name", "OfficeAddress" };
+            checkedListBox2.Items.AddRange(myTables2);*/
             // Changes the selection mode from double-click to single click.
             checkedListBox1.CheckOnClick = true;
             checkedListBox1.CheckOnClick = true;
@@ -44,74 +49,42 @@ namespace dbclass2
             textBox4.PasswordChar = '*';
             // The control will allow no more than 14 characters.
             textBox4.MaxLength = 14;
-        }
-
-
-       
-
-
+            //comboBox1.Sorted = true;
+            //comboBox. = SelectionMode.MultiExtended;
+            checkedListBox1.Sorted = true;
+            /*try
+            {
+                checkedListBox1.SelectionMode = SelectionMode.MultiSimple;
+            }
+            catch(ArgumentException ex)
+            {
+                throw ex;
+            }*/
+        }       
 
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                //Humam - We need to enable this for the demo
-                //DataAccess.Connect(txtDB.Text, txtUserName.Text, txtPassword.Text);
-                //For Testing it's ok to use this
-                DataAccess.Connect();
-
-                List<string> results = DataAccess.GetTableName();
-
-                foreach (var item in results)
-                {
-                    checkedListBox1.Items.Add(item);
-                }
-
-                MessageBox.Show("You are connected!");
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Invalid User Name/Password");
-                ClearTableNamesList();
-            }
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
-
-            try
-            {
-                DimensionalTableInfo dt = new DimensionalTableInfo();
-
-                DataAccess.CreateDimenstionalTable(dt);
-
-                FactTableInfo ft = new FactTableInfo();
-
-                DataAccess.CreateFactTable(ft);
-
-                MessageBox.Show("Tables have been transferred");
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Tables Failed to Load");
-                ClearTableNamesList();
-            }
+            MessageBox.Show("Tables have been transferred");
         }
 
-        private void ClearTableNamesList()
+        private void button1_Click(object sender, EventArgs e)
         {
-            if (checkedListBox1.Items.Count > 0)
+            DataAccess.Connect();
+
+            List<string> results = DataAccess.GetTableName();
+
+            foreach(var item in results)
             {
-                for (int i = checkedListBox1.Items.Count - 1; i >= 0; i--)
-                {
-                    checkedListBox1.Items.RemoveAt(i);
-                }
+                checkedListBox1.Items.Add(item);
+                comboBox1.Items.Add(item);
             }
+
+            MessageBox.Show("You are connected!");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -122,10 +95,54 @@ namespace dbclass2
         private void button4_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Table labeling has been changed");
-
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            //DataAccess.Connect();
+            //string seltab = comboBox1.SelectedItem.ToString();
+            /*List<string> seltabs = new List<string>();
+            List<string> results = DataAccess.GetColumns(seltabs);
+
+            foreach (var item in results)
+            {
+                checkedListBox2.Items.Add(item);
+                //comboBox1.Items.Add(item);
+            }*/
+        }
+       
         private void Form1_Load(object sender, EventArgs e)
+        {
+            comboBox1.Hide();
+        }
+
+        private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataAccess.Connect();
+            List<string> results = new List<string>();
+
+            for (int i = 0; i < checkedListBox1.Items.Count; i++)
+            {
+                if (checkedListBox1.GetItemChecked(i))
+                {
+                    string tab = (string)checkedListBox1.Items[i];
+                    results = DataAccess.GetColumns(tab);
+                }
+            }
+            List<string> columnlists = new List<string>();
+            foreach (string item in results)
+            {
+                if (!columnlists.Contains(item))
+                    columnlists.Add(item);
+            }
+            //columnlists.Clear();
+            foreach (string cols in columnlists)
+            {
+                checkedListBox2.Items.Add(cols);
+            }
+        }
+
+        private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
