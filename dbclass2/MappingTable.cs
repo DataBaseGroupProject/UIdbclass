@@ -8,16 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication1
+namespace dbclass2
 {
-    public partial class Form1 : Form
+    public partial class MappingTable : Form
     {
-        public Form1()
+        public MappingTable()
         {
             InitializeComponent();
         }
-
-       
         
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -28,6 +26,11 @@ namespace WindowsFormsApplication1
         {
             dataGridView1.DataSource = null;
             textBox1.Clear();
+        }
+
+        public void LoadGridData(DimensionalTableInfo info)
+        {
+            dataGridView1.DataSource = info;
         }
 
         //fetch content from previous form..ask karthika

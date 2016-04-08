@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace dbclass2
-
 {
     using System;
     using System.Drawing;
@@ -18,7 +17,6 @@ namespace dbclass2
     using System.Windows.Forms;
     using System.Data;
     using System.IO;
-
 
     public partial class Form1 : Form
     {
@@ -70,6 +68,16 @@ namespace dbclass2
         private void button2_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Tables have been transferred");
+
+            MappingTable mappingTable = new MappingTable();
+
+            DimensionalTableInfo Table = new DimensionalTableInfo();
+
+            Table.TableName = "DOC";
+
+            mappingTable.LoadGridData(Table);
+
+            mappingTable.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -110,6 +118,7 @@ namespace dbclass2
         private void button3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Fields have been transferred");
+
         }
 
         private void button4_Click(object sender, EventArgs e)

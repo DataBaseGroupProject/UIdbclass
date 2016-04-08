@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dbclass2
 {
-    class FactTableInfo : DimensionalTableInfo
+    public class FactTableInfo : DimensionalTableInfo
     {
         public FactTableInfo()
         {
