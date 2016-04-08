@@ -20,7 +20,7 @@ namespace dbclass2
         {
             try
             {
-                //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=karthika86;";
                 string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
@@ -46,7 +46,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables ";
+                cmd.CommandText = "SELECT table_name FROM user_tables";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -63,6 +63,80 @@ namespace dbclass2
 
             return result;
         }
+
+        public static List<string> GetColumns(string tabname)
+        {
+            List<string> result = new List<string>();
+
+            //List<string> selectedtable = new List<string>();
+            //selectedtable = tabnames;
+
+            string selectedtable = tabname;
+
+            //foreach (string tabname in selectedtable)
+            //{
+                try
+                {
+                    Connect();
+
+                    OracleCommand cmd = new OracleCommand();
+
+                    cmd.Connection = con;
+                    string query = "SELECT column_name FROM all_tab_columns where table_name =" + "'" + tabname + "'";
+                    cmd.CommandText = query;
+
+                    OracleDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.Add(reader["column_name"].ToString());
+                    }
+
+                    Close();
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            //}
+            return result;  
+        }
+        /*public static List<string> RemoveColumns(string tabname)
+        {
+            List<string> result = new List<string>();
+
+            //List<string> selectedtable = new List<string>();
+            //selectedtable = tabnames;
+
+            string selectedtable = tabname;
+
+            //foreach (string tabname in selectedtable)
+            //{
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+                string query = "SELECT column_name FROM all_tab_columns where table_name =" + "'" + tabname + "'";
+                cmd.CommandText = query;
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    //result.Add(reader["column_name"].ToString());
+                    for(int i = 0; i < result.)
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            //}
+            return result;
+        }*/
 
         public static void Close()
         {
