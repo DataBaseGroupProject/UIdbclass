@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace dbclass2
-
 {
     using System;
     using System.Drawing;
@@ -18,7 +17,6 @@ namespace dbclass2
     using System.Windows.Forms;
     using System.Data;
     using System.IO;
-
 
     public partial class Form1 : Form
     {
@@ -70,26 +68,57 @@ namespace dbclass2
         private void button2_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Tables have been transferred");
+
+            MappingTable mappingTable = new MappingTable();
+
+            DimensionalTableInfo Table = new DimensionalTableInfo();
+
+            Table.TableName = "DOC";
+
+            mappingTable.LoadGridData(Table);
+
+            mappingTable.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DataAccess.Connect();
-
-            List<string> results = DataAccess.GetTableName();
-
-            foreach(var item in results)
+            try
             {
-                checkedListBox1.Items.Add(item);
-                comboBox1.Items.Add(item);
-            }
+                DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
 
-            MessageBox.Show("You are connected!");
+                List<string> results = DataAccess.GetTableName();
+
+                foreach (var item in results)
+                {
+                    checkedListBox1.Items.Add(item);
+                }
+
+                MessageBox.Show("You are connected!");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid User Name/Password");
+                ClearTableNamesList();
+            }
         }
+
+        private void ClearTableNamesList()
+        {
+            if (checkedListBox1.Items.Count > 0)
+            {
+                for (int i = checkedListBox1.Items.Count - 1; i >= 0; i--)
+                {
+                    checkedListBox1.Items.RemoveAt(i);
+                }
+            }
+        }
+
+
 
         private void button3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Fields have been transferred");
+
         }
 
         private void button4_Click(object sender, EventArgs e)
