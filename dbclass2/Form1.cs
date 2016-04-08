@@ -90,14 +90,7 @@ namespace dbclass2
         private void button3_Click(object sender, EventArgs e)
         {
 
-            DataAccess2.Connect();
-
-            List<string> results = DataAccess2.GetTableName();
-
-            foreach (var item in results)
-            {
-                checkedListBox2.Items.Add(item);
-            }
+            
 
 
             MessageBox.Show("Fields have been transferred");
@@ -131,13 +124,60 @@ namespace dbclass2
         {
             DataAccess.Connect();
             List<string> results = new List<string>();
+            List<string> results2 = new List<string>();
 
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
                 if (checkedListBox1.GetItemChecked(i))
                 {
                     string tab = (string)checkedListBox1.Items[i];
-                    results = DataAccess.GetColumns(tab);
+                    results = DataAccess.GetPrimaryKey(tab);
+                    results2 = DataAccess.GetNonKey(tab);
+                }
+
+
+
+            }
+            List<string> columnlists = new List<string>();
+            List<string> columnlists2 = new List<string>();
+            foreach (string item in results)
+            {
+                if (!columnlists.Contains(item))
+                    columnlists.Add(item);
+            }
+            foreach(string item in results2)
+            {
+                if (!columnlists2.Contains(item))
+                    columnlists2.Add(item);
+            }
+
+            //columnlists.Clear();
+            foreach (string cols in columnlists)
+            {
+                checkedListBox2.Items.Add(cols);
+            }
+
+
+            foreach(string cols in columnlists2)
+            {
+                checkedListBox3.Items.Add(cols);
+            }
+        }
+
+        private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+
+
+            DataAccess.Connect();
+            List<string> results = new List<string>();
+
+            for (int i = 0; i < checkedListBox2.Items.Count; i++)
+            {
+                if (checkedListBox2.GetItemChecked(i))
+                {
+                    string tab = (string)checkedListBox2.Items[i];
+                    results = DataAccess.GetNonKey(tab);
                 }
             }
             List<string> columnlists = new List<string>();
@@ -149,11 +189,17 @@ namespace dbclass2
             //columnlists.Clear();
             foreach (string cols in columnlists)
             {
-                checkedListBox2.Items.Add(cols);
+                checkedListBox3.Items.Add(cols);
             }
+
+
+            
+
+
+
         }
 
-        private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
+        private void label5_Click(object sender, EventArgs e)
         {
 
         }
