@@ -103,6 +103,7 @@ namespace dbclass2
                     checkedListBox1.Items.RemoveAt(i);
                 }
             }
+        }
 
 
 

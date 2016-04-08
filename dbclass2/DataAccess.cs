@@ -3,6 +3,7 @@ using System;
 using Oracle.DataAccess.Types;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 
 namespace dbclass2
 {
