@@ -51,6 +51,12 @@
   <ItemGroup>
     <Compile Include="DataAccess2.cs" />
     <Compile Include="DataAccess.cs" />
+    <Compile Include="MappingTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MappingTable.Designer.cs">
+      <DependentUpon>MappingTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Objects\FactTableInfo.cs" />
     <Compile Include="Objects\DimensionalTableInfo.cs" />
     <Compile Include="Form1.cs">
@@ -63,6 +69,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MappingTable.resx">
+      <DependentUpon>MappingTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
