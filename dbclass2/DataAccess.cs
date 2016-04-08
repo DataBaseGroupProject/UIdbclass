@@ -21,7 +21,7 @@ namespace dbclass2
             try
             {
                 //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=xoxoxo83;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -46,12 +46,12 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables ";
+                cmd.CommandText = "SELECT column_name FROM all_tab_cols WHERE table_name='JASON'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    result.Add(reader["table_name"].ToString());
+                    result.Add(reader["column_name"].ToString());
                 }
 
                 Close();

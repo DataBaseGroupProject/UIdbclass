@@ -19,125 +19,29 @@ namespace dbclass2
     using System.Windows.Forms;
     using System.Data;
     using System.IO;
-
+    using Oracle.DataAccess.Client;
 
     public partial class Form1 : Form
     {
-        private DataGridView dataGridView1 = new DataGridView();
-        private BindingSource bindingSource1 = new BindingSource();
-        private SqlDataAdapter dataAdapter = new SqlDataAdapter();
-        private Button reloadButton = new Button();
-        private Button submitButton = new Button();
+        public static DataGridView dataGridView1 = new DataGridView();
 
-
-
+        public static OracleConnection con;
         public Form1()
         {
+
+
+
+
             InitializeComponent();
 
-            // Sets up the initial objects in the CheckedListBox.
-            string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
-            checkedListBox1.Items.AddRange(myTables);
+            
             
 
-
-            dataGridView1.Dock = DockStyle.Fill;
-
-            reloadButton.Text = "reload";
-            submitButton.Text = "submit";
-            reloadButton.Click += new System.EventHandler(reloadButton_Click);
-            submitButton.Click += new System.EventHandler(submitButton_Click);
-
-            FlowLayoutPanel panel = new FlowLayoutPanel();
-            panel.Dock = DockStyle.Bottom;
-            panel.AutoSize = true;
-            panel.Controls.AddRange(new Control[] { reloadButton, submitButton });
-
-            this.Controls.AddRange(new Control[] { dataGridView1, panel });
-            this.Load += new System.EventHandler(Form1_Load);
-            this.Text = "DataGridView databinding and updating demo";
-
-
-
-
-            // Changes the selection mode from double-click to single click.
-            checkedListBox1.CheckOnClick = true;
-            checkedListBox1.CheckOnClick = true;
-
-            InitializeMyControl();
-           
-        }
-
-
-        private void Form1_Load(object sender, System.EventArgs e)
-        {
-            // Bind the DataGridView to the BindingSource
-            // and load the data from the database.
-            dataGridView1.DataSource = bindingSource1;
-            GetData("select * from Doctors");
-        }
-
-            private void reloadButton_Click(object sender, System.EventArgs e)
-        {
-            // Reload the data from the database.
-            GetData(dataAdapter.SelectCommand.CommandText);
-        }
-
-        private void submitButton_Click(object sender, System.EventArgs e)
-        {
-            // Update the database with the user's changes.
-            dataAdapter.Update((DataTable)bindingSource1.DataSource);
-        }
-
-        private void GetData(string selectCommand)
-        {
-            try
-            {
-                // Specify a connection string. Replace the given value with a 
-                // valid connection string for a Northwind SQL Server sample
-                // database accessible to your system.
-                String connectionString = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
-
-                // Create a new data adapter based on the specified query.
-                dataAdapter = new SqlDataAdapter(selectCommand, connectionString);
-
-                // Create a command builder to generate SQL update, insert, and
-                // delete commands based on selectCommand. These are used to
-                // update the database.
-                SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
-
-                // Populate a new data table and bind it to the BindingSource.
-                DataTable table = new DataTable();
-                table.Locale = System.Globalization.CultureInfo.InvariantCulture;
-                dataAdapter.Fill(table);
-                bindingSource1.DataSource = table;
-
-                // Resize the DataGridView columns to fit the newly loaded content.
-                dataGridView1.AutoResizeColumns(
-                    DataGridViewAutoSizeColumnsMode.AllCellsExceptHeader);
-            }
-            catch (SqlException)
-            {
-                MessageBox.Show("To run this example, replace the value of the " +
-                    "connectionString variable with a connection string that is " +
-                    "valid for your system.");
-            }
         }
 
 
 
-        private void InitializeMyControl()
-        {
-            // Set to no text.
-            textBox4.Text = "";
-            // The password character is an asterisk.
-            textBox4.PasswordChar = '*';
-            // The control will allow no more than 14 characters.
-            textBox4.MaxLength = 14;
-        }
 
-
-       
 
 
 
@@ -154,8 +58,8 @@ namespace dbclass2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            try
-            {
+         
+            
                 DataAccess.Connect();
 
                 List<string> results = DataAccess.GetTableName();
@@ -164,11 +68,8 @@ namespace dbclass2
                 {
                     checkedListBox1.Items.Add(item);
                 }
-            }
-            catch
-            {
-                MessageBox.Show("You are connected!");
-            }
+            
+            
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -178,6 +79,34 @@ namespace dbclass2
         private void button4_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Table labeling has been changed");
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+
+           
+                DataAccess.Connect();
+
+                List<string> results = DataAccess.GetTableName();
+
+                foreach (var item in results)
+                {
+                    checkedListBox2.Items.Add(item);
+                }
+            
+
         }
     }
 }
