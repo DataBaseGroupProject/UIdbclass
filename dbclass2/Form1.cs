@@ -120,41 +120,6 @@ namespace dbclass2
         {
             DataAccess.Connect();
             List<string> results = new List<string>();
-            List<int> tabindex = new List<int>();
-
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-            {
-                if (checkedListBox1.GetItemChecked(i))
-                {
-                    //string tab = (string)checkedListBox1.Items[i];
-                    int tindex = checkedListBox1.Items.IndexOf(i);
-                    tabindex.Add(tindex);
-                    string tab = (string)checkedListBox1.Items[tindex];
-                    results = DataAccess.GetColumns(tab);
-                }
-                /*if(checkedListBox1.GetItemChecked(i))
-                {
-                    string tab = (string)checkedListBox1.Items[i];
-                    results = DataAccess.GetColumns(tab);
-                }*/
-            }
-            List<string> columnlists = new List<string>();
-            foreach (string item in results)
-            {
-                if (!columnlists.Contains(item))
-                    columnlists.Add(item);
-            }
-            //columnlists.Clear();
-            foreach(string cols in columnlists)
-            {
-                checkedListBox2.Items.Add(cols);
-            }
-        }
-        //backup
-        /*private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataAccess.Connect();
-            List<string> results = new List<string>();
 
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
@@ -175,7 +140,7 @@ namespace dbclass2
             {
                 checkedListBox2.Items.Add(cols);
             }
-        }*/
+        }
 
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
