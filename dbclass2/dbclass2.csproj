@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataAccess2.cs" />
     <Compile Include="DataAccess.cs" />
     <Compile Include="Objects\FactTableInfo.cs" />
     <Compile Include="Objects\DimensionalTableInfo.cs" />

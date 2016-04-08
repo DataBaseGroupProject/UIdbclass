@@ -116,6 +116,17 @@ namespace dbclass2
 
         private void button3_Click(object sender, EventArgs e)
         {
+
+            DataAccess2.Connect();
+
+            List<string> results = DataAccess2.GetTableName();
+
+            foreach (var item in results)
+            {
+                checkedListBox2.Items.Add(item);
+            }
+
+
             MessageBox.Show("Fields have been transferred");
         }
 
