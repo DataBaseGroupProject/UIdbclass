@@ -56,16 +56,6 @@ namespace dbclass2
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Tables have been transferred");
-
-            DimensionalTableInfo dt = new DimensionalTableInfo();
-
-            DataAccess.CreateDimenstionalTable(dt);
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             try
@@ -87,6 +77,28 @@ namespace dbclass2
             catch (Exception)
             {
                 MessageBox.Show("Invalid User Name/Password");
+                ClearTableNamesList();
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                DimensionalTableInfo dt = new DimensionalTableInfo();
+
+                DataAccess.CreateDimenstionalTable(dt);
+
+                FactTableInfo ft = new FactTableInfo();
+
+                DataAccess.CreateFactTable(ft);
+
+                MessageBox.Show("Tables have been transferred");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Tables Failed to Load");
                 ClearTableNamesList();
             }
         }

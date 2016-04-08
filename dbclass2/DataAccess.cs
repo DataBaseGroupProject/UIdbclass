@@ -59,8 +59,6 @@ namespace dbclass2
             }
         }
 
-
-
         /// <summary>
         /// Get All Table in DB for User
         /// </summary>
@@ -141,6 +139,9 @@ namespace dbclass2
 
             string pk = string.Empty;
 
+
+            //Humam- Testing Code
+            //---------------------
             Table = new DimensionalTableInfo();
 
             Table.TableName = "DOC";
@@ -153,7 +154,8 @@ namespace dbclass2
 
             Table.Columns.Add("Col1", "Int");
             Table.Columns.Add("Col2", "Varchar(50)");
-
+            //---------------------
+           
             try
             {
                 if (DoesTableExist(Table.TableName) > 0)
@@ -203,7 +205,93 @@ namespace dbclass2
             return result;
         }
 
-       
+        /// <summary>
+        /// Create Dimenstional Table 
+        /// </summary>
+        /// <param name="Table"></param>
+        /// <returns></returns>
+        public static int CreateFactTable(FactTableInfo Table)
+        {
+            int result = 0;
+
+            string pk = string.Empty;
+
+            //Humam- Testing Code
+            //---------------------
+            Table = new FactTableInfo();
+
+            Table.TableName = "ABC";
+
+            Table.PrimaryKeys = new Dictionary<string, string>();
+
+            Table.PrimaryKeys.Add("Dir", "Int");
+
+            Table.Columns = new Dictionary<string, string>();
+
+            Table.Columns.Add("Col3", "Int");
+            Table.Columns.Add("PID", "Int");
+
+            Table.Relations = new Dictionary<string, string>();
+
+            Table.Relations.Add("DOC", "PID");
+
+            //---------------------
+
+            try
+            {
+                if (DoesTableExist(Table.TableName) > 0)
+                    return -99;
+
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine(("CREATE TABLE " + Table.TableName));
+
+                sb.AppendLine((" ( "));
+
+                foreach (var item in Table.PrimaryKeys)
+                {
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
+
+                    pk = pk + item.Key + ",";
+                }
+
+                foreach (var item in Table.Columns)
+                {
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
+                }
+
+                foreach (var item in Table.Relations)
+                {
+                    sb.AppendLine(" CONSTRAINT " + item.Key + "_FK FOREIGN KEY (" + item.Value + ") REFERENCES " + item.Key + "("+ item.Value +"),");
+                }
+
+                pk = pk.TrimEnd(',');
+
+                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ")");
+
+                sb.AppendLine((")"));
+
+                cmd.CommandText = sb.ToString();
+
+                result = cmd.ExecuteNonQuery();
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return result;
+        }
+
+
 
         public static void Close()
         {
