@@ -35,6 +35,29 @@ namespace dbclass2
             }        
         }
 
+        /// <summary>
+        /// Connect with a User Name and Password
+        /// </summary>
+        /// <param name="source">DB URL</param>
+        /// <param name="user">User Name</param>
+        /// <param name="password">Password</param>
+        public static void Connect(string source, string user, string password)
+        {
+            try
+            {
+                string oradb = "Data Source=//" + source + ";User Id=" + user + ";Password=" + password + ";";
+
+                con = new OracleConnection(oradb);  // C#
+
+                con.Open();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public static List<string> GetTableName()
         {
             List<string> result = new List<string>();
