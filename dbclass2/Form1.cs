@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace dbclass2
+
 {
     using System;
     using System.Drawing;
@@ -17,6 +18,7 @@ namespace dbclass2
     using System.Windows.Forms;
     using System.Data;
     using System.IO;
+
 
     public partial class Form1 : Form
     {
@@ -68,23 +70,14 @@ namespace dbclass2
         private void button2_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Tables have been transferred");
-
-            MappingTable mappingTable = new MappingTable();
-
-            DimensionalTableInfo Table = new DimensionalTableInfo();
-
-            Table.TableName = "DOC";
-
-            mappingTable.LoadGridData(Table);
-
-            mappingTable.Show();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
+                //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
+                DataAccess.Connect();
 
                 List<string> results = DataAccess.GetTableName();
 
@@ -118,7 +111,6 @@ namespace dbclass2
         private void button3_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Fields have been transferred");
-
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -149,6 +141,51 @@ namespace dbclass2
         {
             DataAccess.Connect();
             List<string> results = new List<string>();
+            List<string> results2 = new List<string>();
+
+            for (int i = 0; i < checkedListBox1.Items.Count; i++)
+            {
+                if (checkedListBox1.GetItemChecked(i))
+                {
+                    string tab = (string)checkedListBox1.Items[i];
+                    results = DataAccess.GetPrimaryKey(tab);
+                    results2 = DataAccess.GetNonKey(tab);
+                }
+
+
+
+            }
+            List<string> columnlists = new List<string>();
+            List<string> columnlists2 = new List<string>();
+            foreach (string item in results)
+            {
+                if (!columnlists.Contains(item))
+                    columnlists.Add(item);
+            }
+            foreach (string item in results2)
+            {
+                if (!columnlists2.Contains(item))
+                    columnlists2.Add(item);
+            }
+
+            //columnlists.Clear();
+            foreach (string cols in columnlists)
+            {
+                checkedListBox2.Items.Add(cols);
+            }
+
+
+            foreach (string cols in columnlists2)
+            {
+                checkedListBox3.Items.Add(cols);
+            }
+        }
+
+
+        /*private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DataAccess.Connect();
+            List<string> results = new List<string>();
 
             for (int i = 0; i < checkedListBox1.Items.Count; i++)
             {
@@ -169,7 +206,7 @@ namespace dbclass2
             {
                 checkedListBox2.Items.Add(cols);
             }
-        }
+        }*/
 
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
