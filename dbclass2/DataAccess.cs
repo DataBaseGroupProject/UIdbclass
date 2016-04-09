@@ -92,38 +92,39 @@ namespace dbclass2
         {
             List<string> result = new List<string>();
 
-            //List<string> selectedtable = new List<string>();
-            //selectedtable = tabnames;
-
             string selectedtable = tabname;
 
-            //foreach (string tabname in selectedtable)
-            //{
-                try
-                {
-                    Connect();
+            try
+            {
+                Connect();
 
-                    OracleCommand cmd = new OracleCommand();
+                OracleCommand cmd = new OracleCommand();
 
-                    cmd.Connection = con;
-                string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + " and nullable = 'Y' ";
+                cmd.Connection = con;
+
+                string query = (@"SELECT cols.column_name
+                                  FROM all_constraints cons, all_cons_columns cols
+                                  WHERE cons.constraint_type != 'P'
+                                        AND cons.constraint_name = cols.constraint_name
+                                        AND cons.owner = cols.owner 
+                                        AND cols.table_name = " + "'" + tabname + "'");
+
                 cmd.CommandText = query;
 
-                    OracleDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        result.Add(reader["column_name"].ToString());
-                    }
+                OracleDataReader reader = cmd.ExecuteReader();
 
-                    Close();
-                }
-
-
-                catch (Exception)
+                while (reader.Read())
                 {
-                    throw;
+                    result.Add(reader["column_name"].ToString());
                 }
-            //}
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
             return result;  
         }
 
@@ -144,8 +145,7 @@ namespace dbclass2
 
                 string query = (@"SELECT cols.column_name
                                   FROM all_constraints cons, all_cons_columns cols
-                                  WHERE cols.table_name = 'DOC'
-                                        AND cons.constraint_type = 'P'
+                                  WHERE cons.constraint_type = 'P'
                                         AND cons.constraint_name = cols.constraint_name
                                         AND cons.owner = cols.owner 
                                         AND cols.table_name = " + "'" + tabname + "'");
