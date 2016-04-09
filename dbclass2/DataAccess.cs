@@ -21,8 +21,8 @@ namespace dbclass2
         {
             try
             {
-                //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=karthika86;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -88,7 +88,7 @@ namespace dbclass2
             return result;
         }
 
-        public static List<string> GetColumns(string tabname)
+        public static List<string> GetNonKey(string tabname)
         {
             List<string> result = new List<string>();
 
@@ -106,8 +106,8 @@ namespace dbclass2
                     OracleCommand cmd = new OracleCommand();
 
                     cmd.Connection = con;
-                    string query = "SELECT column_name FROM all_tab_columns where table_name =" + "'" + tabname + "'";
-                    cmd.CommandText = query;
+                string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + " and nullable = 'Y' ";
+                cmd.CommandText = query;
 
                     OracleDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -117,6 +117,8 @@ namespace dbclass2
 
                     Close();
                 }
+
+
                 catch (Exception)
                 {
                     throw;
@@ -124,6 +126,47 @@ namespace dbclass2
             //}
             return result;  
         }
+
+        public static List<string> GetPrimaryKey(string tabname)
+        {
+
+            List<string> result = new List<string>();
+
+            //List<string> selectedtable = new List<string>();
+            //selectedtable = tabnames;
+
+            string selectedtable = tabname;
+            try { 
+            Connect();
+            OracleCommand cmd = new OracleCommand();
+
+            
+                 cmd.Connection = con;
+            string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" +" and nullable = 'N' ";
+            cmd.CommandText = query;
+
+            OracleDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                result.Add(reader["column_name"].ToString());
+            }
+
+            Close();
+
+
+
+        }
+
+        catch (Exception)
+                {
+                    throw;
+                }
+            //}
+            return result;  
+        }
+
+
+
         /*public static List<string> RemoveColumns(string tabname)
         {
             List<string> result = new List<string>();
@@ -161,7 +204,6 @@ namespace dbclass2
             //}
             return result;
         }*/
-
 
         /// <summary>
         /// Check if Table Exist in DB
@@ -202,7 +244,7 @@ namespace dbclass2
         /// Create Dimenstional Table 
         /// </summary>
         /// <param name="Table"></param>
-        /// <returns></returns>
+        /// <returns>Int Update Count</returns>
         public static int CreateDimenstionalTable(DimensionalTableInfo Table)
         {
             int result = 0;
@@ -272,10 +314,10 @@ namespace dbclass2
         }
 
         /// <summary>
-        /// Create Dimenstional Table 
+        /// Create Fact Table 
         /// </summary>
         /// <param name="Table"></param>
-        /// <returns></returns>
+        /// <returns>Int Update Count</returns>
         public static int CreateFactTable(FactTableInfo Table)
         {
             int result = 0;
@@ -356,7 +398,6 @@ namespace dbclass2
 
             return result;
         }
-
 
 
         public static void Close()
