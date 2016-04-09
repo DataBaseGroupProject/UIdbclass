@@ -132,36 +132,40 @@ namespace dbclass2
 
             List<string> result = new List<string>();
 
-            //List<string> selectedtable = new List<string>();
-            //selectedtable = tabnames;
-
             string selectedtable = tabname;
-            try { 
-            Connect();
-            OracleCommand cmd = new OracleCommand();
 
-            
-                 cmd.Connection = con;
-            string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" +" and nullable = 'N' ";
-            cmd.CommandText = query;
-
-            OracleDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                result.Add(reader["column_name"].ToString());
-            }
+                Connect();
 
-            Close();
+                OracleCommand cmd = new OracleCommand();
 
+                cmd.Connection = con;
 
+                string query = (@"SELECT cols.column_name
+                                  FROM all_constraints cons, all_cons_columns cols
+                                  WHERE cols.table_name = 'DOC'
+                                        AND cons.constraint_type = 'P'
+                                        AND cons.constraint_name = cols.constraint_name
+                                        AND cons.owner = cols.owner 
+                                        AND cols.table_name = " + "'" + tabname + "'");
 
-        }
+                cmd.CommandText = query;
 
-        catch (Exception)
+                OracleDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    throw;
+                    result.Add(reader["column_name"].ToString());
                 }
-            //}
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        
             return result;  
         }
 
