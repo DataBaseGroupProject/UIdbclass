@@ -139,45 +139,52 @@ namespace dbclass2
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataAccess.Connect();
-            List<string> results = new List<string>();
-            List<string> results2 = new List<string>();
-
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
+            try
             {
-                if (checkedListBox1.GetItemChecked(i))
+                List<string> results = new List<string>();
+                List<string> results2 = new List<string>();
+
+                for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
-                    string tab = (string)checkedListBox1.Items[i];
-                    results = DataAccess.GetPrimaryKey(tab);
-                    results2 = DataAccess.GetNonKey(tab);
+                    if (checkedListBox1.GetItemChecked(i))
+                    {
+                        string tab = (string)checkedListBox1.Items[i];
+                        results = DataAccess.GetPrimaryKey(tab);
+                        results2 = DataAccess.GetNonKey(tab);
+                    }
+                }
+
+                List<string> columnlists = new List<string>();
+                List<string> columnlists2 = new List<string>();
+
+                foreach (string item in results)
+                {
+                    if (!columnlists.Contains(item))
+                        columnlists.Add(item);
+                }
+
+                foreach (string item in results2)
+                {
+                    if (!columnlists2.Contains(item))
+                        columnlists2.Add(item);
+                }
+
+                //columnlists.Clear();
+                foreach (string cols in columnlists)
+                {
+                    checkedListBox2.Items.Add(cols);
                 }
 
 
-
+                foreach (string cols in columnlists2)
+                {
+                    checkedListBox3.Items.Add(cols);
+                }
             }
-            List<string> columnlists = new List<string>();
-            List<string> columnlists2 = new List<string>();
-            foreach (string item in results)
+            catch (Exception)
             {
-                if (!columnlists.Contains(item))
-                    columnlists.Add(item);
-            }
-            foreach (string item in results2)
-            {
-                if (!columnlists2.Contains(item))
-                    columnlists2.Add(item);
-            }
 
-            //columnlists.Clear();
-            foreach (string cols in columnlists)
-            {
-                checkedListBox2.Items.Add(cols);
-            }
-
-
-            foreach (string cols in columnlists2)
-            {
-                checkedListBox3.Items.Add(cols);
+                throw;
             }
         }
 
