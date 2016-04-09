@@ -23,7 +23,6 @@ namespace dbclass2
             {
                 string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
                 //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
-                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=JOEM;Password=today;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -46,8 +45,8 @@ namespace dbclass2
         {
             try
             {
-                string oradb = "Data Source=//" + source + ";User Id=" + user +";Password=" + password + ";";
-                
+                string oradb = "Data Source=//" + source + ";User Id=" + user + ";Password=" + password + ";";
+
                 con = new OracleConnection(oradb);  // C#
 
                 con.Open();
@@ -59,12 +58,6 @@ namespace dbclass2
             }
         }
 
-
-
-        /// <summary>
-        /// Get All Table in DB for User
-        /// </summary>
-        /// <returns></returns>
         public static List<string> GetTableName()
         {
             List<string> result = new List<string>();
@@ -77,7 +70,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables ";
+                cmd.CommandText = "SELECT table_name FROM user_tables";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -94,6 +87,123 @@ namespace dbclass2
 
             return result;
         }
+
+        public static List<string> GetNonKey(string tabname)
+        {
+            List<string> result = new List<string>();
+
+            //List<string> selectedtable = new List<string>();
+            //selectedtable = tabnames;
+
+            string selectedtable = tabname;
+
+            //foreach (string tabname in selectedtable)
+            //{
+                try
+                {
+                    Connect();
+
+                    OracleCommand cmd = new OracleCommand();
+
+                    cmd.Connection = con;
+                string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + " and nullable = 'Y' ";
+                cmd.CommandText = query;
+
+                    OracleDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        result.Add(reader["column_name"].ToString());
+                    }
+
+                    Close();
+                }
+
+
+                catch (Exception)
+                {
+                    throw;
+                }
+            //}
+            return result;  
+        }
+
+        public static List<string> GetPrimaryKey(string tabname)
+        {
+
+            List<string> result = new List<string>();
+
+            //List<string> selectedtable = new List<string>();
+            //selectedtable = tabnames;
+
+            string selectedtable = tabname;
+            try { 
+            Connect();
+            OracleCommand cmd = new OracleCommand();
+
+            
+                 cmd.Connection = con;
+            string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" +" and nullable = 'N' ";
+            cmd.CommandText = query;
+
+            OracleDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                result.Add(reader["column_name"].ToString());
+            }
+
+            Close();
+
+
+
+        }
+
+        catch (Exception)
+                {
+                    throw;
+                }
+            //}
+            return result;  
+        }
+
+
+
+        /*public static List<string> RemoveColumns(string tabname)
+        {
+            List<string> result = new List<string>();
+
+            //List<string> selectedtable = new List<string>();
+            //selectedtable = tabnames;
+
+            string selectedtable = tabname;
+
+            //foreach (string tabname in selectedtable)
+            //{
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+                string query = "SELECT column_name FROM all_tab_columns where table_name =" + "'" + tabname + "'";
+                cmd.CommandText = query;
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    //result.Add(reader["column_name"].ToString());
+                    for(int i = 0; i < result.)
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            //}
+            return result;
+        }*/
 
         /// <summary>
         /// Check if Table Exist in DB
@@ -134,8 +244,8 @@ namespace dbclass2
         /// Create Dimenstional Table 
         /// </summary>
         /// <param name="Table"></param>
-        /// <returns></returns>
-        public static int CreateDimenstionalTable(DimensionalTableInfo Table )
+        /// <returns>Int Update Count</returns>
+        public static int CreateDimenstionalTable(DimensionalTableInfo Table)
         {
             int result = 0;
 
@@ -180,7 +290,7 @@ namespace dbclass2
 
                 foreach (var item in Table.Columns)
                 {
-                    sb.AppendLine(item.Key + " " + item.Value +  ",");
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
                 }
 
                 pk = pk.TrimEnd(',');
@@ -203,7 +313,92 @@ namespace dbclass2
             return result;
         }
 
-       
+        /// <summary>
+        /// Create Fact Table 
+        /// </summary>
+        /// <param name="Table"></param>
+        /// <returns>Int Update Count</returns>
+        public static int CreateFactTable(FactTableInfo Table)
+        {
+            int result = 0;
+
+            string pk = string.Empty;
+
+            //Humam- Testing Code
+            //---------------------
+            Table = new FactTableInfo();
+
+            Table.TableName = "ABC";
+
+            Table.PrimaryKeys = new Dictionary<string, string>();
+
+            Table.PrimaryKeys.Add("Dir", "Int");
+
+            Table.Columns = new Dictionary<string, string>();
+
+            Table.Columns.Add("Col3", "Int");
+            Table.Columns.Add("PID", "Int");
+
+            Table.Relations = new Dictionary<string, string>();
+
+            Table.Relations.Add("DOC", "PID");
+
+            //---------------------
+
+            try
+            {
+                if (DoesTableExist(Table.TableName) > 0)
+                    return -99;
+
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine(("CREATE TABLE " + Table.TableName));
+
+                sb.AppendLine((" ( "));
+
+                foreach (var item in Table.PrimaryKeys)
+                {
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
+
+                    pk = pk + item.Key + ",";
+                }
+
+                foreach (var item in Table.Columns)
+                {
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
+                }
+
+                foreach (var item in Table.Relations)
+                {
+                    sb.AppendLine(" CONSTRAINT " + item.Key + "_FK FOREIGN KEY (" + item.Value + ") REFERENCES " + item.Key + "(" + item.Value + "),");
+                }
+
+                pk = pk.TrimEnd(',');
+
+                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ")");
+
+                sb.AppendLine((")"));
+
+                cmd.CommandText = sb.ToString();
+
+                result = cmd.ExecuteNonQuery();
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return result;
+        }
+
 
         public static void Close()
         {
