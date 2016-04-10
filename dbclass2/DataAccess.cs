@@ -88,11 +88,9 @@ namespace dbclass2
             return result;
         }
 
-        public static List<string> GetNonKey(string tabname)
+        public static List<string> GetNonKey(string selectedtable)
         {
             List<string> result = new List<string>();
-
-            string selectedtable = tabname;
 
             try
             {
@@ -102,12 +100,16 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT cols.column_name
-                                  FROM all_constraints cons, all_cons_columns cols
-                                  WHERE cons.constraint_type != 'P'
-                                        AND cons.constraint_name = cols.constraint_name
-                                        AND cons.owner = cols.owner 
-                                        AND cols.table_name = " + "'" + tabname + "'");
+                string query = (@"SELECT column_name
+                                  FROM all_tab_cols
+                                  WHERE  column_name Not In (SELECT cols.column_name
+                                                             FROM all_constraints cons, all_cons_columns cols
+                                                             WHERE cons.constraint_type = 'P'
+                                                                   AND cons.constraint_name = cols.constraint_name
+                                                                   AND cons.owner = cols.owner 
+                                                                   AND cols.table_name = " + "'" + selectedtable + "')" +
+                                          "AND table_name = " + "'" + selectedtable + "'");
+                                       
 
                 cmd.CommandText = query;
 

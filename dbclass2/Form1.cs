@@ -153,32 +153,21 @@ namespace dbclass2
                         results2 = DataAccess.GetNonKey(tab);
                     }
                 }
-
-                List<string> columnlists = new List<string>();
-                List<string> columnlists2 = new List<string>();
-
-                foreach (string item in results)
+  
+                foreach (string cols in results)
                 {
-                    if (!columnlists.Contains(item))
-                        columnlists.Add(item);
+                    if (!checkedListBox2.Items.Contains(cols))
+                    {
+                        checkedListBox2.Items.Add(cols);
+                    }
                 }
 
-                foreach (string item in results2)
+                foreach (string cols in results2)
                 {
-                    if (!columnlists2.Contains(item))
-                        columnlists2.Add(item);
-                }
-
-                //columnlists.Clear();
-                foreach (string cols in columnlists)
-                {
-                    checkedListBox2.Items.Add(cols);
-                }
-
-
-                foreach (string cols in columnlists2)
-                {
-                    checkedListBox3.Items.Add(cols);
+                    if (!checkedListBox3.Items.Contains(cols))
+                    {
+                        checkedListBox3.Items.Add(cols);
+                    }
                 }
             }
             catch (Exception)
