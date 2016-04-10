@@ -88,42 +88,45 @@ namespace dbclass2
             return result;
         }
 
-        public static List<string> GetNonKey(string tabname)
+        public static List<string> GetNonKey(string selectedtable)
         {
             List<string> result = new List<string>();
 
-            //List<string> selectedtable = new List<string>();
-            //selectedtable = tabnames;
+            try
+            {
+                Connect();
 
-            string selectedtable = tabname;
+                OracleCommand cmd = new OracleCommand();
 
-            //foreach (string tabname in selectedtable)
-            //{
-                try
-                {
-                    Connect();
+                cmd.Connection = con;
 
-                    OracleCommand cmd = new OracleCommand();
+                string query = (@"SELECT column_name
+                                  FROM all_tab_cols
+                                  WHERE  column_name Not In (SELECT cols.column_name
+                                                             FROM all_constraints cons, all_cons_columns cols
+                                                             WHERE cons.constraint_type = 'P'
+                                                                   AND cons.constraint_name = cols.constraint_name
+                                                                   AND cons.owner = cols.owner 
+                                                                   AND cols.table_name = " + "'" + selectedtable + "')" +
+                                          "AND table_name = " + "'" + selectedtable + "'");
+                                       
 
-                    cmd.Connection = con;
-                string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + " and nullable = 'Y' ";
                 cmd.CommandText = query;
 
-                    OracleDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        result.Add(reader["column_name"].ToString());
-                    }
+                OracleDataReader reader = cmd.ExecuteReader();
 
-                    Close();
-                }
-
-
-                catch (Exception)
+                while (reader.Read())
                 {
-                    throw;
+                    result.Add(reader["column_name"].ToString());
                 }
-            //}
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
             return result;  
         }
 
@@ -144,8 +147,7 @@ namespace dbclass2
 
                 string query = (@"SELECT cols.column_name
                                   FROM all_constraints cons, all_cons_columns cols
-                                  WHERE cols.table_name = 'DOC'
-                                        AND cons.constraint_type = 'P'
+                                  WHERE cons.constraint_type = 'P'
                                         AND cons.constraint_name = cols.constraint_name
                                         AND cons.owner = cols.owner 
                                         AND cols.table_name = " + "'" + tabname + "'");
