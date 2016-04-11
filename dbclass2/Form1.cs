@@ -69,7 +69,29 @@ namespace dbclass2
 
         private void button2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Tables have been transferred");
+            try
+            {
+                DimensionalTableInfo tb = new DimensionalTableInfo();
+
+                tb.TableName = textBox4.Text;
+
+                tb.PrimaryKeys = new Dictionary<string, string>();
+
+                tb.PrimaryKeys.Add(listBox1.Items[0].ToString(), "varchar(50)");
+
+                tb.Columns = new Dictionary<string, string>();
+
+                tb.Columns.Add(listBox2.Items[0].ToString(), "varchar(50)");
+
+                DataAccess.CreateDimenstionalTable(tb);
+
+                MessageBox.Show("Tables " + tb.TableName + "have been created");
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Table creation error");
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -269,6 +291,11 @@ namespace dbclass2
         }
 
         private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
         {
 
         }
