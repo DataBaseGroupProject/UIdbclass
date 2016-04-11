@@ -44,11 +44,11 @@ namespace dbclass2
         private void InitializeMyControl()
         {
             // Set to no text.
-            textBox4.Text = "";
+            //textBox4.Text = "";
             // The password character is an asterisk.
-            textBox4.PasswordChar = '*';
+            //textBox4.PasswordChar = '*';
             // The control will allow no more than 14 characters.
-            textBox4.MaxLength = 14;
+            //textBox4.MaxLength = 14;
             //comboBox1.Sorted = true;
             //comboBox. = SelectionMode.MultiExtended;
             checkedListBox1.Sorted = true;
@@ -87,6 +87,8 @@ namespace dbclass2
                 }
 
                 MessageBox.Show("You are connected!");
+                var form2 = new Form2();
+                form2.Show();
             }
             catch (Exception)
             {
@@ -134,7 +136,18 @@ namespace dbclass2
        
         private void Form1_Load(object sender, EventArgs e)
         {
+            button5.Hide();
             comboBox1.Hide();
+            label4.Hide();
+            label5.Hide();
+            label6.Hide();
+            label7.Hide();
+            label8.Hide();
+            checkedListBox1.Hide();
+            checkedListBox2.Hide();
+            checkedListBox3.Hide();
+            checkedListBox4.Hide();
+            //button2.Hide();
         }
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -211,6 +224,12 @@ namespace dbclass2
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var form2 = new Form2();
+            form2.Show();
         }
     }
 }

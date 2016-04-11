@@ -29,7 +29,6 @@ namespace dbclass2
             }
             catch (Exception)
             {
-
                 throw;
             }        
         }
@@ -82,8 +81,8 @@ namespace dbclass2
                     OracleCommand cmd = new OracleCommand();
 
                     cmd.Connection = con;
-                string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + " and nullable = 'Y' ";
-                cmd.CommandText = query;
+                    string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + " and nullable = 'Y' "+" and column_name not like '%ID%'";
+                    cmd.CommandText = query;
 
                     OracleDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -118,8 +117,9 @@ namespace dbclass2
 
             
                  cmd.Connection = con;
-            string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" +" and nullable = 'N' ";
-            cmd.CommandText = query;
+                //string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" +" and nullable = 'N' ";
+                string query = "SELECT column_name FROM all_tab_columns WHERE table_name =" + "'" + tabname + "'" + "and column_id=1" + " and nullable = 'N' ";
+                cmd.CommandText = query;
 
             OracleDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
