@@ -62,6 +62,7 @@
     <Compile Include="MappingTable.Designer.cs">
       <DependentUpon>MappingTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Objects\ColumnInfo.cs" />
     <Compile Include="Objects\FactTableInfo.cs" />
     <Compile Include="Objects\DimensionalTableInfo.cs" />
     <Compile Include="Form1.cs">

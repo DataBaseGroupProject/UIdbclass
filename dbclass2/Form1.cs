@@ -22,12 +22,17 @@ namespace dbclass2
 
     public partial class Form1 : Form
     {
+        public static List<DimensionalTableInfo> FinalDimensionalTables;
+        public static List<FactTableInfo> FinalFactTables;
         Form2 frm;
+
         public Form1()
         {
             InitializeComponent();
             frm = new Form2(this);
 
+            FinalDimensionalTables = new List<DimensionalTableInfo>();
+            FinalFactTables = new List<FactTableInfo>();
 
             // Sets up the initial objects in the CheckedListBox.
             /*string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
@@ -38,8 +43,7 @@ namespace dbclass2
             checkedListBox1.CheckOnClick = true;
             checkedListBox1.CheckOnClick = true;
 
-            InitializeMyControl();
-           
+            InitializeMyControl();     
         }
 
 
@@ -86,11 +90,25 @@ namespace dbclass2
 
                 tb.PrimaryKeys = new Dictionary<string, string>();
 
-                tb.PrimaryKeys.Add(listBox1.Items[0].ToString(), "varchar(50)");
+                foreach(var item in listBox1.Items)
+                {
+                    string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                    if(keyInfo.Count() > 1)
+                        tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                }
 
                 tb.Columns = new Dictionary<string, string>();
 
-                tb.Columns.Add(listBox2.Items[0].ToString(), "varchar(50)");
+                foreach (var item in listBox2.Items)
+                {
+                    string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                    if (columnInfo.Count() > 1)
+                        tb.Columns.Add(columnInfo[0], columnInfo[1]);
+                }
+
+                FinalDimensionalTables.Add(tb);
 
                 DataAccess.CreateDimenstionalTable(tb);
 
@@ -100,10 +118,10 @@ namespace dbclass2
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                MessageBox.Show("Table creation error");
+                MessageBox.Show("Failed to Create Table" );
             }
         }
 
@@ -251,19 +269,15 @@ namespace dbclass2
                 {
                     string tab = (string)checkedListBox2.Items[i];
                     columnlists.Add(tab);
-                    //results = DataAccess.GetColumns(tab);
                 }
             }
-            //List<string> columnlists = new List<string>();
-            //foreach (string item in results)
-            //{
-            //    if (!columnlists.Contains(item))
-            //        columnlists.Add(item);
-            //}
-
+           
             foreach (string cols in columnlists)
             {
-                listBox1.Items.Add(cols);
+                if (!listBox1.Items.Contains(cols))
+                {
+                    listBox1.Items.Add(cols);
+                }
             }
         }
 
@@ -276,31 +290,33 @@ namespace dbclass2
 
         private void checkedListBox3_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            DataAccess.Connect();
-            List<string> results = new List<string>();
-            List<string> columnlists = new List<string>();
-
-            for (int i = 0; i < checkedListBox3.Items.Count; i++)
+            try
             {
-                if (checkedListBox3.GetItemChecked(i))
+                DataAccess.Connect();
+                List<string> results = new List<string>();
+                List<string> columnlists = new List<string>();
+
+                for (int i = 0; i < checkedListBox3.Items.Count; i++)
                 {
-                    string tab = (string)checkedListBox3.Items[i];
-                    columnlists.Add(tab);
-                    //results = DataAccess.GetColumns(tab);
+                    if (checkedListBox3.GetItemChecked(i))
+                    {
+                        string tab = (string)checkedListBox3.Items[i];
+                        columnlists.Add(tab);
+                    }
+                }
+
+                foreach (string cols in columnlists)
+                {
+                    if (!listBox2.Items.Contains(cols))
+                    {
+                        listBox2.Items.Add(cols);
+                    }
                 }
             }
-            //List<string> columnlists = new List<string>();
-            //foreach (string item in results)
-            //{
-            //    if (!columnlists.Contains(item))
-            //        columnlists.Add(item);
-            //}
-
-            foreach (string cols in columnlists)
+            catch (Exception)
             {
-                listBox2.Items.Add(cols);
+                throw;
             }
-
         }
 
         private void label8_Click(object sender, EventArgs e)
@@ -313,5 +329,5 @@ namespace dbclass2
 
         }
     }
-    }
+}
 
