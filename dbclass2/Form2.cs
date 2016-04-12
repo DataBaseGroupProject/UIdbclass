@@ -33,11 +33,8 @@ namespace dbclass2
 
             try
             {
-
-                
-
                 //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
-                DataAccess.Connect2();
+                DataAccess.Connect();
 
                 List<string> results = DataAccess.GetTableName();
 
