@@ -79,8 +79,7 @@ namespace dbclass2
             try
             {
 
-                this.Hide();
-                frm.Show();
+               
 
 
 
@@ -169,6 +168,10 @@ namespace dbclass2
         private void button4_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Table labeling has been changed");
+
+            this.Hide();
+            frm.Show();
+
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
