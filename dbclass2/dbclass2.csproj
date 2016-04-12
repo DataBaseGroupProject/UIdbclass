@@ -49,7 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataAccess2.cs" />
     <Compile Include="DataAccess.cs" />
     <Compile Include="MappingTable.cs">
       <SubType>Form</SubType>

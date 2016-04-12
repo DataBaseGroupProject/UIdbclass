@@ -21,8 +21,8 @@ namespace dbclass2
         {
             try
             {
-                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+               // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -257,18 +257,18 @@ namespace dbclass2
 
             string pk = string.Empty;
 
-            Table = new DimensionalTableInfo();
+            //Table = new DimensionalTableInfo();
 
-            Table.TableName = "DOC";
+            //Table.TableName = "DOC";
 
-            Table.PrimaryKeys = new Dictionary<string, string>();
+            //Table.PrimaryKeys = new Dictionary<string, string>();
 
-            Table.PrimaryKeys.Add("PID", "Int");
+            //Table.PrimaryKeys.Add("PID", "Int");
 
-            Table.Columns = new Dictionary<string, string>();
+            //Table.Columns = new Dictionary<string, string>();
 
-            Table.Columns.Add("Col1", "Int");
-            Table.Columns.Add("Col2", "Varchar(50)");
+            //Table.Columns.Add("Col1", "Int");
+            //Table.Columns.Add("Col2", "Varchar(50)");
 
             try
             {

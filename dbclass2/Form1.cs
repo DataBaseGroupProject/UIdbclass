@@ -69,7 +69,29 @@ namespace dbclass2
 
         private void button2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Tables have been transferred");
+            try
+            {
+                DimensionalTableInfo tb = new DimensionalTableInfo();
+
+                tb.TableName = textBox4.Text;
+
+                tb.PrimaryKeys = new Dictionary<string, string>();
+
+                tb.PrimaryKeys.Add(listBox1.Items[0].ToString(), "varchar(50)");
+
+                tb.Columns = new Dictionary<string, string>();
+
+                tb.Columns.Add(listBox2.Items[0].ToString(), "varchar(50)");
+
+                DataAccess.CreateDimenstionalTable(tb);
+
+                MessageBox.Show("Tables " + tb.TableName + "have been created");
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Table creation error");
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -197,7 +219,7 @@ namespace dbclass2
                 if (!columnlists.Contains(item))
                     columnlists.Add(item);
             }
-            //columnlists.Clear();
+            columnlists.Clear();
             foreach (string cols in columnlists)
             {
                 checkedListBox2.Items.Add(cols);
@@ -206,7 +228,77 @@ namespace dbclass2
 
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
+            DataAccess.Connect();
+            List<string> results = new List<string>();
+            List<string> columnlists = new List<string>();
+
+            for (int i = 0; i < checkedListBox2.Items.Count; i++)
+            {
+                if (checkedListBox2.GetItemChecked(i))
+                {
+                    string tab = (string)checkedListBox2.Items[i];
+                    columnlists.Add(tab);
+                    //results = DataAccess.GetColumns(tab);
+                }
+            }
+            //List<string> columnlists = new List<string>();
+            //foreach (string item in results)
+            //{
+            //    if (!columnlists.Contains(item))
+            //        columnlists.Add(item);
+            //}
+
+            foreach (string cols in columnlists)
+            {
+                listBox1.Items.Add(cols);
+            }
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+      
+
+        private void checkedListBox3_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            DataAccess.Connect();
+            List<string> results = new List<string>();
+            List<string> columnlists = new List<string>();
+
+            for (int i = 0; i < checkedListBox3.Items.Count; i++)
+            {
+                if (checkedListBox3.GetItemChecked(i))
+                {
+                    string tab = (string)checkedListBox3.Items[i];
+                    columnlists.Add(tab);
+                    //results = DataAccess.GetColumns(tab);
+                }
+            }
+            //List<string> columnlists = new List<string>();
+            //foreach (string item in results)
+            //{
+            //    if (!columnlists.Contains(item))
+            //        columnlists.Add(item);
+            //}
+
+            foreach (string cols in columnlists)
+            {
+                listBox2.Items.Add(cols);
+            }
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
 
         }
     }
-}
+    }
+
