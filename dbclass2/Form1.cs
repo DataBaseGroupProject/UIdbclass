@@ -22,9 +22,12 @@ namespace dbclass2
 
     public partial class Form1 : Form
     {
+        Form2 frm;
         public Form1()
         {
             InitializeComponent();
+            frm = new Form2(this);
+
 
             // Sets up the initial objects in the CheckedListBox.
             /*string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
@@ -71,6 +74,12 @@ namespace dbclass2
         {
             try
             {
+
+                this.Hide();
+                frm.Show();
+
+
+
                 DimensionalTableInfo tb = new DimensionalTableInfo();
 
                 tb.TableName = textBox4.Text;
@@ -86,6 +95,10 @@ namespace dbclass2
                 DataAccess.CreateDimenstionalTable(tb);
 
                 MessageBox.Show("Tables " + tb.TableName + "have been created");
+
+                
+
+
             }
             catch (Exception)
             {

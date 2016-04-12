@@ -14,6 +14,7 @@ namespace dbclass2
         }
 
         public static OracleConnection con;
+        public static OracleConnection con2;
 
         public object CommandType { get; private set; }
 
@@ -21,8 +22,8 @@ namespace dbclass2
         {
             try
             {
-               // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+              // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+               string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -33,6 +34,15 @@ namespace dbclass2
 
                 throw;
             }        
+        }
+
+
+        public static void Connect2()
+        {
+            string oradb2 = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3; ";
+           // string oradb2 = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+            con2 = new OracleConnection(oradb2);
+            con2.Open();
         }
 
         /// <summary>
