@@ -101,7 +101,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT column_name, data_type, nullable
+                string query = (@"SELECT column_name, data_type, nullable, data_length
                                   FROM all_tab_cols
                                   WHERE  column_name Not In (SELECT cols.column_name
                                                              FROM all_constraints cons, all_cons_columns cols
@@ -118,7 +118,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "_" + reader["data_type"].ToString());
+                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
                 }
 
                 Close();
@@ -143,7 +143,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT column_name, data_type, nullable
+                string query = (@"SELECT column_name, data_type, nullable, data_length
                                   FROM all_tab_cols
                                   WHERE  column_name Not In (SELECT cols.column_name
                                                              FROM all_constraints cons, all_cons_columns cols
@@ -165,6 +165,7 @@ namespace dbclass2
                     obj.Name = reader["column_name"].ToString();
                     obj.DataType = reader["data_type"].ToString();
                     obj.IsNull = reader["nullable"].ToString();
+                    obj.DataLength = reader["data_length"].ToString();
 
                     result.Add(obj);
                 }
@@ -193,7 +194,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.data_length
 
                                   FROM all_tab_columns AllColumns
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
@@ -208,7 +209,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "_" + reader["data_type"].ToString());
+                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
                 }
 
                 Close();
@@ -235,7 +236,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
 
                                   FROM all_tab_columns AllColumns
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
@@ -255,6 +256,7 @@ namespace dbclass2
                     obj.Name = reader["column_name"].ToString();
                     obj.DataType = reader["data_type"].ToString();
                     obj.IsNull = reader["nullable"].ToString();
+                    obj.DataLength = reader["data_length"].ToString();
 
                     result.Add(obj);
                 }

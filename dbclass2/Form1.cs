@@ -22,9 +22,15 @@ namespace dbclass2
 
     public partial class Form1 : Form
     {
+        public static List<DimensionalTableInfo> FinalDimensionalTables;
+        public static List<FactTableInfo> FinalFactTables;
+
         public Form1()
         {
             InitializeComponent();
+
+            FinalDimensionalTables = new List<DimensionalTableInfo>();
+            FinalFactTables = new List<FactTableInfo>();
 
             // Sets up the initial objects in the CheckedListBox.
             /*string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
@@ -35,8 +41,7 @@ namespace dbclass2
             checkedListBox1.CheckOnClick = true;
             checkedListBox1.CheckOnClick = true;
 
-            InitializeMyControl();
-           
+            InitializeMyControl();     
         }
 
 
@@ -77,20 +82,34 @@ namespace dbclass2
 
                 tb.PrimaryKeys = new Dictionary<string, string>();
 
-                tb.PrimaryKeys.Add(listBox1.Items[0].ToString(), "varchar(50)");
+                foreach(var item in listBox1.Items)
+                {
+                    string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                    if(keyInfo.Count() > 1)
+                        tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                }
 
                 tb.Columns = new Dictionary<string, string>();
 
-                tb.Columns.Add(listBox2.Items[0].ToString(), "varchar(50)");
+                foreach (var item in listBox2.Items)
+                {
+                    string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                    if (columnInfo.Count() > 1)
+                        tb.Columns.Add(columnInfo[0], columnInfo[1]);
+                }
+
+                FinalDimensionalTables.Add(tb);
 
                 DataAccess.CreateDimenstionalTable(tb);
 
                 MessageBox.Show("Tables " + tb.TableName + "have been created");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                MessageBox.Show("Table creation error");
+                MessageBox.Show("Failed to Create Table" );
             }
         }
 
@@ -298,5 +317,5 @@ namespace dbclass2
 
         }
     }
-    }
+}
 

@@ -56,7 +56,7 @@
             // textBox1
             // 
             this.textBox1.Location = new System.Drawing.Point(546, 21);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(6);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(196, 31);
             this.textBox1.TabIndex = 0;
@@ -64,7 +64,7 @@
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(546, 88);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(6);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(196, 31);
             this.textBox2.TabIndex = 1;
@@ -72,7 +72,7 @@
             // textBox3
             // 
             this.textBox3.Location = new System.Drawing.Point(548, 150);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(6);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(196, 31);
             this.textBox3.TabIndex = 2;
@@ -82,7 +82,7 @@
             // 
             this.checkedListBox1.FormattingEnabled = true;
             this.checkedListBox1.Location = new System.Drawing.Point(28, 321);
-            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.checkedListBox1.Margin = new System.Windows.Forms.Padding(6);
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(286, 290);
             this.checkedListBox1.TabIndex = 3;
@@ -91,7 +91,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(820, 58);
-            this.button1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.button1.Margin = new System.Windows.Forms.Padding(6);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(150, 44);
             this.button1.TabIndex = 4;
@@ -103,7 +103,7 @@
             // 
             this.checkedListBox2.FormattingEnabled = true;
             this.checkedListBox2.Location = new System.Drawing.Point(326, 321);
-            this.checkedListBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.checkedListBox2.Margin = new System.Windows.Forms.Padding(6);
             this.checkedListBox2.Name = "checkedListBox2";
             this.checkedListBox2.Size = new System.Drawing.Size(286, 290);
             this.checkedListBox2.TabIndex = 5;
@@ -112,7 +112,7 @@
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(282, 763);
-            this.button2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.button2.Margin = new System.Windows.Forms.Padding(6);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(160, 44);
             this.button2.TabIndex = 6;
@@ -123,7 +123,7 @@
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(98, 658);
-            this.button3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.button3.Margin = new System.Windows.Forms.Padding(6);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(150, 44);
             this.button3.TabIndex = 7;
@@ -134,7 +134,7 @@
             // textBox4
             // 
             this.textBox4.Location = new System.Drawing.Point(64, 763);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(6);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(196, 31);
             this.textBox4.TabIndex = 8;
@@ -143,7 +143,7 @@
             // button4
             // 
             this.button4.Location = new System.Drawing.Point(398, 658);
-            this.button4.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.button4.Margin = new System.Windows.Forms.Padding(6);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(150, 44);
             this.button4.TabIndex = 9;
@@ -155,7 +155,7 @@
             // 
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(1106, 63);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.comboBox1.Margin = new System.Windows.Forms.Padding(4);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(180, 33);
             this.comboBox1.TabIndex = 10;
@@ -195,7 +195,7 @@
             // 
             this.checkedListBox3.FormattingEnabled = true;
             this.checkedListBox3.Location = new System.Drawing.Point(622, 321);
-            this.checkedListBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkedListBox3.Margin = new System.Windows.Forms.Padding(4);
             this.checkedListBox3.Name = "checkedListBox3";
             this.checkedListBox3.Size = new System.Drawing.Size(286, 290);
             this.checkedListBox3.TabIndex = 14;
@@ -257,7 +257,7 @@
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 25;
             this.listBox1.Location = new System.Drawing.Point(927, 321);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(6);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(286, 279);
             this.listBox1.TabIndex = 21;
@@ -268,7 +268,7 @@
             this.listBox2.FormattingEnabled = true;
             this.listBox2.ItemHeight = 25;
             this.listBox2.Location = new System.Drawing.Point(1225, 321);
-            this.listBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.listBox2.Margin = new System.Windows.Forms.Padding(6);
             this.listBox2.Name = "listBox2";
             this.listBox2.Size = new System.Drawing.Size(286, 279);
             this.listBox2.TabIndex = 22;
@@ -311,7 +311,7 @@
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
