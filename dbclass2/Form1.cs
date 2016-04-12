@@ -238,16 +238,9 @@ namespace dbclass2
                 {
                     string tab = (string)checkedListBox2.Items[i];
                     columnlists.Add(tab);
-                    //results = DataAccess.GetColumns(tab);
                 }
             }
-            //List<string> columnlists = new List<string>();
-            //foreach (string item in results)
-            //{
-            //    if (!columnlists.Contains(item))
-            //        columnlists.Add(item);
-            //}
-
+           
             foreach (string cols in columnlists)
             {
                 listBox1.Items.Add(cols);
