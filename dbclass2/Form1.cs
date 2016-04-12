@@ -24,10 +24,10 @@ namespace dbclass2
     {
         public static List<DimensionalTableInfo> FinalDimensionalTables;
         public static List<FactTableInfo> FinalFactTables;
-
-        public Form1()
+        Form2 frm;        public Form1()
         {
             InitializeComponent();
+            frm = new Form2(this);
 
             FinalDimensionalTables = new List<DimensionalTableInfo>();
             FinalFactTables = new List<FactTableInfo>();
@@ -76,6 +76,12 @@ namespace dbclass2
         {
             try
             {
+
+                this.Hide();
+                frm.Show();
+
+
+
                 DimensionalTableInfo tb = new DimensionalTableInfo();
 
                 tb.TableName = textBox4.Text;
@@ -105,6 +111,10 @@ namespace dbclass2
                 DataAccess.CreateDimenstionalTable(tb);
 
                 MessageBox.Show("Tables " + tb.TableName + "have been created");
+
+                
+
+
             }
             catch (Exception ex)
             {
