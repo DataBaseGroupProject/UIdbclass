@@ -21,8 +21,8 @@ namespace dbclass2
         {
             try
             {
-               // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -145,12 +145,14 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT cols.column_name
-                                  FROM all_constraints cons, all_cons_columns cols
-                                  WHERE cons.constraint_type = 'P'
-                                        AND cons.constraint_name = cols.constraint_name
-                                        AND cons.owner = cols.owner 
-                                        AND cols.table_name = " + "'" + tabname + "'");
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type
+
+                                  FROM all_tab_columns AllColumns
+                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
+                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
+                                  
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                        And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
 

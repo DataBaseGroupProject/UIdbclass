@@ -243,7 +243,10 @@ namespace dbclass2
            
             foreach (string cols in columnlists)
             {
-                listBox1.Items.Add(cols);
+                if (!listBox1.Items.Contains(cols))
+                {
+                    listBox1.Items.Add(cols);
+                }
             }
         }
 
@@ -256,31 +259,33 @@ namespace dbclass2
 
         private void checkedListBox3_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            DataAccess.Connect();
-            List<string> results = new List<string>();
-            List<string> columnlists = new List<string>();
-
-            for (int i = 0; i < checkedListBox3.Items.Count; i++)
+            try
             {
-                if (checkedListBox3.GetItemChecked(i))
+                DataAccess.Connect();
+                List<string> results = new List<string>();
+                List<string> columnlists = new List<string>();
+
+                for (int i = 0; i < checkedListBox3.Items.Count; i++)
                 {
-                    string tab = (string)checkedListBox3.Items[i];
-                    columnlists.Add(tab);
-                    //results = DataAccess.GetColumns(tab);
+                    if (checkedListBox3.GetItemChecked(i))
+                    {
+                        string tab = (string)checkedListBox3.Items[i];
+                        columnlists.Add(tab);
+                    }
+                }
+
+                foreach (string cols in columnlists)
+                {
+                    if (!listBox2.Items.Contains(cols))
+                    {
+                        listBox2.Items.Add(cols);
+                    }
                 }
             }
-            //List<string> columnlists = new List<string>();
-            //foreach (string item in results)
-            //{
-            //    if (!columnlists.Contains(item))
-            //        columnlists.Add(item);
-            //}
-
-            foreach (string cols in columnlists)
+            catch (Exception)
             {
-                listBox2.Items.Add(cols);
+                throw;
             }
-
         }
 
         private void label8_Click(object sender, EventArgs e)
