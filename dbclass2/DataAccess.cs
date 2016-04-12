@@ -4,6 +4,7 @@ using Oracle.DataAccess.Types;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using dbclass2.Objects;
 
 namespace dbclass2
 {
@@ -21,8 +22,8 @@ namespace dbclass2
         {
             try
             {
-               // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -100,7 +101,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT column_name
+                string query = (@"SELECT column_name, data_type, nullable, data_length
                                   FROM all_tab_cols
                                   WHERE  column_name Not In (SELECT cols.column_name
                                                              FROM all_constraints cons, all_cons_columns cols
@@ -117,7 +118,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString());
+                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
                 }
 
                 Close();
@@ -130,9 +131,57 @@ namespace dbclass2
             return result;  
         }
 
+        public static List<ColumnInfo> GetNonKeyObject(string selectedtable)
+        {
+            List<ColumnInfo> result = new List<ColumnInfo>();
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                string query = (@"SELECT column_name, data_type, nullable, data_length
+                                  FROM all_tab_cols
+                                  WHERE  column_name Not In (SELECT cols.column_name
+                                                             FROM all_constraints cons, all_cons_columns cols
+                                                             WHERE cons.constraint_type = 'P'
+                                                                   AND cons.constraint_name = cols.constraint_name
+                                                                   AND cons.owner = cols.owner 
+                                                                   AND cols.table_name = " + "'" + selectedtable + "')" +
+                                          "AND table_name = " + "'" + selectedtable + "'");
+
+
+                cmd.CommandText = query;
+
+                OracleDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ColumnInfo obj = new ColumnInfo();
+
+                    obj.Name = reader["column_name"].ToString();
+                    obj.DataType = reader["data_type"].ToString();
+                    obj.IsNull = reader["nullable"].ToString();
+                    obj.DataLength = reader["data_length"].ToString();
+
+                    result.Add(obj);
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
         public static List<string> GetPrimaryKey(string tabname)
         {
-
             List<string> result = new List<string>();
 
             string selectedtable = tabname;
@@ -145,12 +194,14 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT cols.column_name
-                                  FROM all_constraints cons, all_cons_columns cols
-                                  WHERE cons.constraint_type = 'P'
-                                        AND cons.constraint_name = cols.constraint_name
-                                        AND cons.owner = cols.owner 
-                                        AND cols.table_name = " + "'" + tabname + "'");
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.data_length
+
+                                  FROM all_tab_columns AllColumns
+                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
+                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
+                                  
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                        And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
 
@@ -158,7 +209,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString());
+                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
                 }
 
                 Close();
@@ -171,6 +222,54 @@ namespace dbclass2
             return result;  
         }
 
+        public static List<ColumnInfo> GetPrimaryKeyObject(string tabname)
+        {
+            List<ColumnInfo> result = new List<ColumnInfo>();
+
+            string selectedtable = tabname;
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
+
+                                  FROM all_tab_columns AllColumns
+                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
+                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
+                                  
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                        And AllColumns.table_name = " + "'" + tabname + "'");
+
+                cmd.CommandText = query;
+
+                OracleDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ColumnInfo obj = new ColumnInfo();
+
+                    obj.Name = reader["column_name"].ToString();
+                    obj.DataType = reader["data_type"].ToString();
+                    obj.IsNull = reader["nullable"].ToString();
+                    obj.DataLength = reader["data_length"].ToString();
+
+                    result.Add(obj);
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
 
 
         /*public static List<string> RemoveColumns(string tabname)
