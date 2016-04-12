@@ -4,6 +4,7 @@ using Oracle.DataAccess.Types;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using dbclass2.Objects;
 
 namespace dbclass2
 {
