@@ -18,5 +18,7 @@ namespace dbclass2.Objects
         public string DataType { get; set; }
 
         public string IsNull { get; set; }
+
+        public string DataLength { get; set; }
     }
 }
