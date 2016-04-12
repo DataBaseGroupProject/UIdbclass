@@ -24,7 +24,9 @@ namespace dbclass2
     {
         public static List<DimensionalTableInfo> FinalDimensionalTables;
         public static List<FactTableInfo> FinalFactTables;
-        Form2 frm;        public Form1()
+        Form2 frm;
+
+        public Form1()
         {
             InitializeComponent();
             frm = new Form2(this);
