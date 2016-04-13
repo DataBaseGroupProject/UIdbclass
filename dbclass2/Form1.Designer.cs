@@ -118,10 +118,10 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(1731, 314);
+            this.button2.Location = new System.Drawing.Point(1725, 321);
             this.button2.Margin = new System.Windows.Forms.Padding(6);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(196, 44);
+            this.button2.Size = new System.Drawing.Size(196, 61);
             this.button2.TabIndex = 6;
             this.button2.Text = "Add Table";
             this.button2.UseVisualStyleBackColor = true;
@@ -144,7 +144,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(1731, 378);
+            this.button4.Location = new System.Drawing.Point(1725, 434);
             this.button4.Margin = new System.Windows.Forms.Padding(6);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(196, 56);

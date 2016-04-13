@@ -41,9 +41,6 @@ namespace dbclass2
                 foreach (var item in results)
                 {
                      listBox1.Items.Add(item);
-                   // sds = new DataSet();
-                   // dataGridView1.DataSource = sds.Tables["item"];
-                   // dataGridView1.ReadOnly = true;
                 }
 
                 MessageBox.Show("You are connected!");

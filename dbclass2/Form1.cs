@@ -106,7 +106,7 @@ namespace dbclass2
 
                 DataAccess.CreateDimenstionalTable(tb);
 
-                MessageBox.Show("Tables " + tb.TableName + " have been created Successfully.");
+                MessageBox.Show("Table " + tb.TableName + " Created Successfully.");
 
                 ClearExistingTableInfoList();
                 ClearNewTableInfoList();
@@ -195,12 +195,32 @@ namespace dbclass2
                         }
                     }
 
-                    DataAccess.CreateFactTable(fact);
+                    int iRet = DataAccess.CreateFactTable(fact);
 
-                    MessageBox.Show("Table labeling has been changed");
+                    if (iRet == -1)
+                        MessageBox.Show("Data Warehouse Created Successfully.");
 
                     this.Hide();
                     frm.Show();
+                }
+                else
+                {
+                    if(checkedListBox1.SelectedItems.Count > 0)
+                    {
+                        List<string> selectedTables = new List<string>();
+
+                        foreach(var item in checkedListBox1.SelectedItems)
+                            selectedTables.Add(item.ToString());
+
+                        int iRet = DataAccess.BuildDataWarhouse(selectedTables);
+
+                        if(iRet == -1)
+                            MessageBox.Show("Data Warehouse Created Successfully.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please Select At least One Tables to Build the Data Warehouse.");
+                    }
                 }
             }
             catch (Exception)

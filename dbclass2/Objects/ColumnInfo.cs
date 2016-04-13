@@ -20,5 +20,7 @@ namespace dbclass2.Objects
         public string IsNull { get; set; }
 
         public string DataLength { get; set; }
+
+        public string ConstraintType { get; set; }
     }
 }

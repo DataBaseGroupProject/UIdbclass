@@ -238,7 +238,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length, cons.constraint_type
 
                                   FROM all_tab_columns AllColumns
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
@@ -259,6 +259,7 @@ namespace dbclass2
                     obj.DataType = reader["data_type"].ToString();
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
+                    obj.ConstraintType = reader["constraint_type"].ToString();
 
                     result.Add(obj);
                 }
@@ -463,14 +464,85 @@ namespace dbclass2
 
                 Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
             return result;
         }
 
+        public static int BuildDataWarhouse(List<string> tables)
+        {
+            int result = 0;
+
+            try
+            {
+                if(tables.Count > 0)
+                {
+                    FactTableInfo fact = new FactTableInfo();
+
+                    fact.PrimaryKeys = new Dictionary<string, string>();
+                    fact.Columns = new Dictionary<string, string>();
+                    fact.Relations = new Dictionary<string, string>();
+
+                    fact.TableName = "Auto_Generated_Fact_Table";
+
+                    fact.PrimaryKeys.Add("ID", "int");
+
+                    foreach (var table in tables)
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        d.TableName = table + "_Dimensional";
+
+                        List<ColumnInfo> column = GetPrimaryKeyObject(table);
+
+                        column.RemoveAll(i => i.ConstraintType != "P");
+
+                        if(column.Count > 0)
+                        {
+                            d.PrimaryKeys = new Dictionary<string, string>();
+
+                            foreach(var key in column)
+                            {
+                                d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+
+                                fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+
+                                fact.Relations.Add(table, key.Name);
+                            }
+                        }
+
+                        column = GetNonKeyObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            d.Columns = new Dictionary<string, string>();
+
+                            foreach (var key in column)
+                            {
+                                d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                            }
+                        }
+
+                        result += CreateDimenstionalTable(d);
+                    }
+
+                    if(result == -1)
+                    {
+                        result = CreateFactTable(fact);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
 
         public static void Close()
         {
