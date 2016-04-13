@@ -84,22 +84,38 @@ namespace dbclass2
 
                 tb.PrimaryKeys = new Dictionary<string, string>();
 
-                foreach (var item in listBox1.Items)
-                {
-                    string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
 
-                    if (keyInfo.Count() > 1)
-                        tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                if(listBox1.Items.Count > 0)
+                {
+                    foreach (var item in listBox1.Items)
+                    {
+                        string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                        if (keyInfo.Count() > 1)
+                            tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                    }
                 }
+                else
+                {
+                    MessageBox.Show("Please Select at least One Primary Key.");
+                }
+
 
                 tb.Columns = new Dictionary<string, string>();
 
-                foreach (var item in listBox2.Items)
+                if (listBox2.Items.Count > 0)
                 {
-                    string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+                    foreach (var item in listBox2.Items)
+                    {
+                        string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
 
-                    if (columnInfo.Count() > 1)
-                        tb.Columns.Add(columnInfo[0], columnInfo[1]);
+                        if (columnInfo.Count() > 1)
+                            tb.Columns.Add(columnInfo[0], columnInfo[1]);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please Select at least One Column.");
                 }
 
                 FinalDimensionalTables.Add(tb);
@@ -114,7 +130,6 @@ namespace dbclass2
             }
             catch (Exception)
             {
-
                 MessageBox.Show("Failed to Create Table");
             }
         }
