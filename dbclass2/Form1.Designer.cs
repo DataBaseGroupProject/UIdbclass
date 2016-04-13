@@ -287,7 +287,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1560, 846);
+            this.ClientSize = new System.Drawing.Size(1953, 930);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.listBox2);
             this.Controls.Add(this.listBox1);
