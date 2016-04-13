@@ -51,47 +51,6 @@ namespace dbclass2
         {
         }       
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                DimensionalTableInfo tb = new DimensionalTableInfo();
-
-                tb.TableName = textBox4.Text;
-
-                tb.PrimaryKeys = new Dictionary<string, string>();
-
-                foreach(var item in listBox1.Items)
-                {
-                    string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
-
-                    if(keyInfo.Count() > 1)
-                        tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
-                }
-
-                tb.Columns = new Dictionary<string, string>();
-
-                foreach (var item in listBox2.Items)
-                {
-                    string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
-
-                    if (columnInfo.Count() > 1)
-                        tb.Columns.Add(columnInfo[0], columnInfo[1]);
-                }
-
-                FinalDimensionalTables.Add(tb);
-
-                DataAccess.CreateDimenstionalTable(tb);
-
-                MessageBox.Show("Tables " + tb.TableName + " have been created Successfully.");
-            }
-            catch (Exception)
-            {
-
-                MessageBox.Show("Failed to Create Table" );
-            }
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             try
@@ -115,6 +74,51 @@ namespace dbclass2
             }
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DimensionalTableInfo tb = new DimensionalTableInfo();
+
+                tb.TableName = textBox4.Text;
+
+                tb.PrimaryKeys = new Dictionary<string, string>();
+
+                foreach (var item in listBox1.Items)
+                {
+                    string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                    if (keyInfo.Count() > 1)
+                        tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                }
+
+                tb.Columns = new Dictionary<string, string>();
+
+                foreach (var item in listBox2.Items)
+                {
+                    string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+
+                    if (columnInfo.Count() > 1)
+                        tb.Columns.Add(columnInfo[0], columnInfo[1]);
+                }
+
+                FinalDimensionalTables.Add(tb);
+
+                DataAccess.CreateDimenstionalTable(tb);
+
+                MessageBox.Show("Tables " + tb.TableName + " have been created Successfully.");
+
+                ClearExistingTableInfoList();
+                ClearNewTableInfoList();
+                textBox4.Text = string.Empty;
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Failed to Create Table");
+            }
+        }
+
         private void ClearTableNamesList()
         {
             if (checkedListBox1.Items.Count > 0)
@@ -126,31 +130,79 @@ namespace dbclass2
             }
         }
 
+        private void ClearExistingTableInfoList()
+        {
+            if (checkedListBox2.Items.Count > 0)
+            {
+                for (int i = checkedListBox2.Items.Count - 1; i >= 0; i--)
+                {
+                    checkedListBox2.Items.RemoveAt(i);
+                }
+            }
+
+            if (checkedListBox3.Items.Count > 0)
+            {
+                for (int i = checkedListBox3.Items.Count - 1; i >= 0; i--)
+                {
+                    checkedListBox3.Items.RemoveAt(i);
+                }
+            }
+        }
+
+        private void ClearNewTableInfoList()
+        {
+            if (listBox1.Items.Count > 0)
+            {
+                for (int i = listBox1.Items.Count - 1; i >= 0; i--)
+                {
+                    listBox1.Items.RemoveAt(i);
+                }
+            }
+
+            if (listBox2.Items.Count > 0)
+            {
+                for (int i = listBox2.Items.Count - 1; i >= 0; i--)
+                {
+                    listBox2.Items.RemoveAt(i);
+                }
+            }
+        }
+
+
         private void button4_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Table labeling has been changed");
 
-            this.Hide();
-            frm.Show();
-
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //DataAccess.Connect();
-            //string seltab = comboBox1.SelectedItem.ToString();
-            /*List<string> seltabs = new List<string>();
-            List<string> results = DataAccess.GetColumns(seltabs);
-
-            foreach (var item in results)
+            try
             {
-                checkedListBox2.Items.Add(item);
-                //comboBox1.Items.Add(item);
-            }*/
-        }
-       
-        private void Form1_Load(object sender, EventArgs e)
-        {
+                if(FinalDimensionalTables.Count > 1)
+                {
+                    FactTableInfo fact = new FactTableInfo();
+
+                    fact.TableName = "Fact Table";
+
+                    fact.PrimaryKeys.Add("ID", "Int");
+
+                    foreach (var table in FinalDimensionalTables)
+                    {
+                        foreach (var item in table.PrimaryKeys)
+                        {
+                            fact.Columns.Add(item.Key, item.Value);
+                            fact.Relations.Add(item.Key, item.Value);
+                        }
+                    }
+
+                    DataAccess.CreateFactTable(fact);
+
+                    MessageBox.Show("Table labeling has been changed");
+
+                    this.Hide();
+                    frm.Show();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Failed to submit changes. Please try again later.");
+            }
         }
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -193,33 +245,6 @@ namespace dbclass2
             }
         }
 
-
-        /*private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataAccess.Connect();
-            List<string> results = new List<string>();
-
-            for (int i = 0; i < checkedListBox1.Items.Count; i++)
-            {
-                if (checkedListBox1.GetItemChecked(i))
-                {
-                    string tab = (string)checkedListBox1.Items[i];
-                    results = DataAccess.GetColumns(tab);
-                }
-            }
-            List<string> columnlists = new List<string>();
-            foreach (string item in results)
-            {
-                if (!columnlists.Contains(item))
-                    columnlists.Add(item);
-            }
-            columnlists.Clear();
-            foreach (string cols in columnlists)
-            {
-                checkedListBox2.Items.Add(cols);
-            }
-        }*/
-
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             DataAccess.Connect();
@@ -243,14 +268,7 @@ namespace dbclass2
                 }
             }
         }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-      
-
+        
         private void checkedListBox3_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             try

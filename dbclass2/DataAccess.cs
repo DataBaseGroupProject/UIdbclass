@@ -394,22 +394,22 @@ namespace dbclass2
 
             //Humam- Testing Code
             //---------------------
-            Table = new FactTableInfo();
+            //Table = new FactTableInfo();
 
-            Table.TableName = "ABC";
+            //Table.TableName = "ABC";
 
-            Table.PrimaryKeys = new Dictionary<string, string>();
+            //Table.PrimaryKeys = new Dictionary<string, string>();
 
-            Table.PrimaryKeys.Add("Dir", "Int");
+            //Table.PrimaryKeys.Add("Dir", "Int");
 
-            Table.Columns = new Dictionary<string, string>();
+            //Table.Columns = new Dictionary<string, string>();
 
-            Table.Columns.Add("Col3", "Int");
-            Table.Columns.Add("PID", "Int");
+            //Table.Columns.Add("Col3", "Int");
+            //Table.Columns.Add("PID", "Int");
 
-            Table.Relations = new Dictionary<string, string>();
+            //Table.Relations = new Dictionary<string, string>();
 
-            Table.Relations.Add("DOC", "PID");
+            //Table.Relations.Add("DOC", "PID");
 
             //---------------------
 
