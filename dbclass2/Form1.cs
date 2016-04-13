@@ -180,13 +180,18 @@ namespace dbclass2
 
                     fact.TableName = "Fact Table";
 
+                    fact.PrimaryKeys = new Dictionary<string, string>();
+
                     fact.PrimaryKeys.Add("ID", "Int");
 
                     foreach (var table in FinalDimensionalTables)
                     {
                         foreach (var item in table.PrimaryKeys)
                         {
+                            fact.Columns = new Dictionary<string, string>();
                             fact.Columns.Add(item.Key, item.Value);
+
+                            fact.Relations = new Dictionary<string, string>();
                             fact.Relations.Add(item.Key, item.Value);
                         }
                     }
