@@ -34,55 +34,27 @@ namespace dbclass2
             FinalDimensionalTables = new List<DimensionalTableInfo>();
             FinalFactTables = new List<FactTableInfo>();
 
-            // Sets up the initial objects in the CheckedListBox.
-            /*string[] myTables = { "Doctors", "Medications", "Patients", "Hospitals", "Nurses" };
-            checkedListBox1.Items.AddRange(myTables);
-            string[] myTables2 = { "DoctorID", "First Name", "Last Name", "OfficeAddress" };
-            checkedListBox2.Items.AddRange(myTables2);*/
-            // Changes the selection mode from double-click to single click.
+            // StartPosition was set to FormStartPosition.Manual in the properties window.
+            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
+            int w = Width >= screen.Width ? screen.Width : (screen.Width + Width) / 2;
+            int h = Height >= screen.Height ? screen.Height : (screen.Height + Height) / 2;
+            this.Location = new Point((screen.Width - w) / 2, (screen.Height - h) / 2);
+            this.Size = new Size(w, h);
+
             checkedListBox1.CheckOnClick = true;
             checkedListBox1.CheckOnClick = true;
 
             InitializeMyControl();     
         }
 
-
-
         private void InitializeMyControl()
         {
-            // Set to no text.
-            textBox4.Text = "";
-            // The password character is an asterisk.
-            textBox4.PasswordChar = '*';
-            // The control will allow no more than 14 characters.
-            textBox4.MaxLength = 14;
-            //comboBox1.Sorted = true;
-            //comboBox. = SelectionMode.MultiExtended;
-            checkedListBox1.Sorted = true;
-            /*try
-            {
-                checkedListBox1.SelectionMode = SelectionMode.MultiSimple;
-            }
-            catch(ArgumentException ex)
-            {
-                throw ex;
-            }*/
         }       
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
-
-               
-
-
-
                 DimensionalTableInfo tb = new DimensionalTableInfo();
 
                 tb.TableName = textBox4.Text;
@@ -111,13 +83,9 @@ namespace dbclass2
 
                 DataAccess.CreateDimenstionalTable(tb);
 
-                MessageBox.Show("Tables " + tb.TableName + "have been created");
-
-                
-
-
+                MessageBox.Show("Tables " + tb.TableName + " have been created Successfully.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 MessageBox.Show("Failed to Create Table" );
@@ -158,13 +126,6 @@ namespace dbclass2
             }
         }
 
-
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Fields have been transferred");
-        }
-
         private void button4_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Table labeling has been changed");
@@ -190,7 +151,6 @@ namespace dbclass2
        
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBox1.Hide();
         }
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -322,14 +282,9 @@ namespace dbclass2
             }
         }
 
-        private void label8_Click(object sender, EventArgs e)
+        private void button5_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-
+            Application.Exit();
         }
     }
 }
