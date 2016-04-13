@@ -345,6 +345,8 @@ namespace dbclass2
 
                 StringBuilder sb = new StringBuilder();
 
+                Table.TableName = Table.TableName.Replace(' ', '_');
+
                 sb.AppendLine(("CREATE TABLE " + Table.TableName));
 
                 sb.AppendLine((" ( "));
@@ -425,6 +427,8 @@ namespace dbclass2
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
+
+                Table.TableName = Table.TableName.Replace(' ', '_');
 
                 sb.AppendLine(("CREATE TABLE " + Table.TableName));
 
