@@ -15,8 +15,10 @@ namespace dbclass2
         }
 
         public static OracleConnection con;
+        public static OracleConnection con2;
 
         public object CommandType { get; private set; }
+
 
         public static void Connect()
         {
@@ -33,7 +35,7 @@ namespace dbclass2
             {
 
                 throw;
-            }        
+            }
         }
 
         /// <summary>
@@ -110,7 +112,7 @@ namespace dbclass2
                                                                    AND cons.owner = cols.owner 
                                                                    AND cols.table_name = " + "'" + selectedtable + "')" +
                                           "AND table_name = " + "'" + selectedtable + "'");
-                                       
+
 
                 cmd.CommandText = query;
 
@@ -127,8 +129,8 @@ namespace dbclass2
             {
                 throw;
             }
-            
-            return result;  
+
+            return result;
         }
 
         public static List<ColumnInfo> GetNonKeyObject(string selectedtable)
@@ -218,8 +220,8 @@ namespace dbclass2
             {
                 throw;
             }
-        
-            return result;  
+
+            return result;
         }
 
         public static List<ColumnInfo> GetPrimaryKeyObject(string tabname)
@@ -236,7 +238,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length, cons.constraint_type
 
                                   FROM all_tab_columns AllColumns
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
@@ -257,6 +259,7 @@ namespace dbclass2
                     obj.DataType = reader["data_type"].ToString();
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
+                    obj.ConstraintType = reader["constraint_type"].ToString();
 
                     result.Add(obj);
                 }
@@ -270,45 +273,6 @@ namespace dbclass2
 
             return result;
         }
-
-
-        /*public static List<string> RemoveColumns(string tabname)
-        {
-            List<string> result = new List<string>();
-
-            //List<string> selectedtable = new List<string>();
-            //selectedtable = tabnames;
-
-            string selectedtable = tabname;
-
-            //foreach (string tabname in selectedtable)
-            //{
-            try
-            {
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-                string query = "SELECT column_name FROM all_tab_columns where table_name =" + "'" + tabname + "'";
-                cmd.CommandText = query;
-
-                OracleDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    //result.Add(reader["column_name"].ToString());
-                    for(int i = 0; i < result.)
-                }
-
-                Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            //}
-            return result;
-        }*/
 
         /// <summary>
         /// Check if Table Exist in DB
@@ -382,6 +346,8 @@ namespace dbclass2
 
                 StringBuilder sb = new StringBuilder();
 
+                Table.TableName = Table.TableName.Replace(' ', '_');
+
                 sb.AppendLine(("CREATE TABLE " + Table.TableName));
 
                 sb.AppendLine((" ( "));
@@ -431,22 +397,22 @@ namespace dbclass2
 
             //Humam- Testing Code
             //---------------------
-            Table = new FactTableInfo();
+            //Table = new FactTableInfo();
 
-            Table.TableName = "ABC";
+            //Table.TableName = "ABC";
 
-            Table.PrimaryKeys = new Dictionary<string, string>();
+            //Table.PrimaryKeys = new Dictionary<string, string>();
 
-            Table.PrimaryKeys.Add("Dir", "Int");
+            //Table.PrimaryKeys.Add("Dir", "Int");
 
-            Table.Columns = new Dictionary<string, string>();
+            //Table.Columns = new Dictionary<string, string>();
 
-            Table.Columns.Add("Col3", "Int");
-            Table.Columns.Add("PID", "Int");
+            //Table.Columns.Add("Col3", "Int");
+            //Table.Columns.Add("PID", "Int");
 
-            Table.Relations = new Dictionary<string, string>();
+            //Table.Relations = new Dictionary<string, string>();
 
-            Table.Relations.Add("DOC", "PID");
+            //Table.Relations.Add("DOC", "PID");
 
             //---------------------
 
@@ -462,6 +428,8 @@ namespace dbclass2
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
+
+                Table.TableName = Table.TableName.Replace(' ', '_');
 
                 sb.AppendLine(("CREATE TABLE " + Table.TableName));
 
@@ -496,14 +464,85 @@ namespace dbclass2
 
                 Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
             return result;
         }
 
+        public static int BuildDataWarhouse(List<string> tables)
+        {
+            int result = 0;
+
+            try
+            {
+                if(tables.Count > 0)
+                {
+                    FactTableInfo fact = new FactTableInfo();
+
+                    fact.PrimaryKeys = new Dictionary<string, string>();
+                    fact.Columns = new Dictionary<string, string>();
+                    fact.Relations = new Dictionary<string, string>();
+
+                    fact.TableName = "Auto_Generated_Fact_Table";
+
+                    fact.PrimaryKeys.Add("ID", "int");
+
+                    foreach (var table in tables)
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        d.TableName = table + "_Dimensional";
+
+                        List<ColumnInfo> column = GetPrimaryKeyObject(table);
+
+                        column.RemoveAll(i => i.ConstraintType != "P");
+
+                        if(column.Count > 0)
+                        {
+                            d.PrimaryKeys = new Dictionary<string, string>();
+
+                            foreach(var key in column)
+                            {
+                                d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+
+                                fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+
+                                fact.Relations.Add(table, key.Name);
+                            }
+                        }
+
+                        column = GetNonKeyObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            d.Columns = new Dictionary<string, string>();
+
+                            foreach (var key in column)
+                            {
+                                d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                            }
+                        }
+
+                        result += CreateDimenstionalTable(d);
+                    }
+
+                    if(result == -1)
+                    {
+                        result = CreateFactTable(fact);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
 
         public static void Close()
         {
