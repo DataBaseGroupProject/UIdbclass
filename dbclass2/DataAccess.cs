@@ -595,16 +595,17 @@ namespace dbclass2
         }
 
         /// <summary>
-        ///  
+        ///  Load Data for Dimension Table
         /// </summary>
         /// <param name="Table"></param>
         /// <returns>Int Update Count</returns>
-        public static int LoadWarehouseData(FactTableInfo Table)
+
+        public static int LoadDimensionTableData(FactTableInfo Table)
         {
             int result = 0;
 
             string pk = string.Empty;
-          
+
             try
             {
                 Connect();
@@ -618,7 +619,7 @@ namespace dbclass2
                 foreach (var item in Table.Relations)
                 {
 
-                    
+
                 }
 
                 cmd.CommandText = sb.ToString();
