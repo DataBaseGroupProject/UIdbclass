@@ -34,17 +34,30 @@ namespace dbclass2
 
         }
 
+
+
+        //This method will connect to the esmart2 database and will display the tables from esmart2 in a listbox
         private void button1_Click(object sender, EventArgs e)
         {
+
+
             try
             {
                 DataAccess.Connect2();
 
-                List<string> res = DataAccess.GetTableName2();
+                List<string> res = DataAccess.GetFactTable();
 
                 foreach (var itm in res)
                 {
                     listBox1.Items.Add(itm);
+                }
+
+
+
+                List<string> dim = DataAccess.GetDimTable();
+                foreach(var element in dim)
+                {
+                    listBox2.Items.Add(element);
                 }
 
                 MessageBox.Show("You are connected!");
@@ -117,7 +130,20 @@ namespace dbclass2
 
         }
 
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
 
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
     
