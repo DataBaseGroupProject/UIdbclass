@@ -15,16 +15,14 @@ namespace dbclass2
         }
 
         public static OracleConnection con;
-        public static OracleConnection con2;
 
         public object CommandType { get; private set; }
-
 
         public static void Connect()
         {
             try
             {
-               // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
                 string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
@@ -595,6 +593,48 @@ namespace dbclass2
 
             return result;
         }
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="Table"></param>
+        /// <returns>Int Update Count</returns>
+        public static int LoadWarehouseData(FactTableInfo Table)
+        {
+            int result = 0;
+
+            string pk = string.Empty;
+          
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var item in Table.Relations)
+                {
+
+                    
+                }
+
+                cmd.CommandText = sb.ToString();
+
+                result = cmd.ExecuteNonQuery();
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
 
         public static void Close()
         {
