@@ -84,7 +84,6 @@ namespace dbclass2
 
                 tb.PrimaryKeys = new Dictionary<string, string>();
 
-
                 if(listBox1.Items.Count > 0)
                 {
                     foreach (var item in listBox1.Items)
@@ -286,25 +285,23 @@ namespace dbclass2
 
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataAccess.Connect();
-            List<string> results = new List<string>();
-            List<string> columnlists = new List<string>();
-
-            for (int i = 0; i < checkedListBox2.Items.Count; i++)
+            try
             {
-                if (checkedListBox2.GetItemChecked(i))
+                for (int i = 0; i < checkedListBox2.Items.Count; i++)
                 {
-                    string tab = (string)checkedListBox2.Items[i];
-                    columnlists.Add(tab);
+                    if (checkedListBox2.GetItemChecked(i))
+                    {
+                        if (!listBox1.Items.Contains(checkedListBox3.Items[i]))
+                        {
+                            listBox1.Items.Add(checkedListBox3.Items[i]);
+                        }
+                    }
                 }
             }
-           
-            foreach (string cols in columnlists)
+            catch (Exception)
             {
-                if (!listBox1.Items.Contains(cols))
-                {
-                    listBox1.Items.Add(cols);
-                }
+
+                throw;
             }
         }
         
@@ -312,24 +309,14 @@ namespace dbclass2
         {
             try
             {
-                DataAccess.Connect();
-                List<string> results = new List<string>();
-                List<string> columnlists = new List<string>();
-
                 for (int i = 0; i < checkedListBox3.Items.Count; i++)
                 {
                     if (checkedListBox3.GetItemChecked(i))
                     {
-                        string tab = (string)checkedListBox3.Items[i];
-                        columnlists.Add(tab);
-                    }
-                }
-
-                foreach (string cols in columnlists)
-                {
-                    if (!listBox2.Items.Contains(cols))
-                    {
-                        listBox2.Items.Add(cols);
+                        if (!listBox2.Items.Contains(checkedListBox3.Items[i]))
+                        {
+                            listBox2.Items.Add(checkedListBox3.Items[i]);
+                        }
                     }
                 }
             }
@@ -342,6 +329,21 @@ namespace dbclass2
         private void button5_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ClearExistingTableInfoList();
+                ClearNewTableInfoList();
+                ClearTableNamesList();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
