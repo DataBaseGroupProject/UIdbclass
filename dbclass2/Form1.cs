@@ -121,6 +121,8 @@ namespace dbclass2
 
                 DataAccess.CreateDimenstionalTable(tb);
 
+
+
                 MessageBox.Show("Table " + tb.TableName + " Created Successfully.");
 
                 ClearExistingTableInfoList();
@@ -252,7 +254,7 @@ namespace dbclass2
 
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
-                    if (checkedListBox1.GetItemChecked(i))
+                    if (checkedListBox1.GetSelected(i) || checkedListBox1.GetItemChecked(i))
                     {
                         string tab = (string)checkedListBox1.Items[i];
                         results = DataAccess.GetPrimaryKey(tab);
@@ -289,7 +291,7 @@ namespace dbclass2
             {
                 for (int i = 0; i < checkedListBox2.Items.Count; i++)
                 {
-                    if (checkedListBox2.GetItemChecked(i))
+                    if (checkedListBox2.GetSelected(i) || checkedListBox2.GetItemChecked(i))
                     {
                         if (!listBox1.Items.Contains(checkedListBox3.Items[i]))
                         {
@@ -311,7 +313,7 @@ namespace dbclass2
             {
                 for (int i = 0; i < checkedListBox3.Items.Count; i++)
                 {
-                    if (checkedListBox3.GetItemChecked(i))
+                    if (checkedListBox3.GetSelected(i) || checkedListBox3.GetItemChecked(i))
                     {
                         if (!listBox2.Items.Contains(checkedListBox3.Items[i]))
                         {
