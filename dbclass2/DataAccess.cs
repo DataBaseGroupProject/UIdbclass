@@ -237,7 +237,6 @@ namespace dbclass2
                                                                    AND cols.table_name = " + "'" + selectedtable + "')" +
                                           "AND table_name = " + "'" + selectedtable + "'");
 
-
                 cmd.CommandText = query;
 
                 OracleDataReader reader = cmd.ExecuteReader();
@@ -588,11 +587,14 @@ namespace dbclass2
 
                             foreach(var key in column)
                             {
-                                d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                if(!d.PrimaryKeys.ContainsKey(key.Name))
+                                    d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
 
-                                fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                if (!fact.Columns.ContainsKey(key.Name))
+                                    fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
 
-                                fact.Relations.Add(table, key.Name);
+                                if (!fact.Relations.ContainsKey(table))
+                                    fact.Relations.Add(table, key.Name);
                             }
                         }
 
@@ -604,7 +606,8 @@ namespace dbclass2
 
                             foreach (var key in column)
                             {
-                                d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                if(!d.Columns.ContainsKey(key.Name))
+                                    d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
                             }
                         }
 
@@ -617,7 +620,7 @@ namespace dbclass2
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;
@@ -627,16 +630,17 @@ namespace dbclass2
         }
 
         /// <summary>
-        ///  
+        ///  Load Data for Dimension Table
         /// </summary>
         /// <param name="Table"></param>
         /// <returns>Int Update Count</returns>
-        public static int LoadWarehouseData(FactTableInfo Table)
+
+        public static int LoadDimensionTableData(FactTableInfo Table)
         {
             int result = 0;
 
             string pk = string.Empty;
-          
+
             try
             {
                 Connect();
@@ -650,7 +654,7 @@ namespace dbclass2
                 foreach (var item in Table.Relations)
                 {
 
-                    
+
                 }
 
                 cmd.CommandText = sb.ToString();
