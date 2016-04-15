@@ -36,7 +36,7 @@ namespace dbclass2
 
 
 
-        //This method will connect to the esmart2 database and will display the tables from esmart2 in a listbox
+        //This method will connect to the esmart2 database and will display the tables from esmart2 in a listbox as a facttable listbox and a dimension table listbox
         private void button1_Click(object sender, EventArgs e)
         {
 

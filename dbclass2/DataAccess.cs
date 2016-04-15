@@ -59,7 +59,7 @@ namespace dbclass2
             }
         }
 
-
+        //will function as an alternative connection string for esmart2 but currently is setup for esmart1
         public static void Connect2()
         {
             try
@@ -108,7 +108,7 @@ namespace dbclass2
             return result;
         }
 
-
+        //queries for the dimension table to display the dimension table in form2
         public static List<string> GetDimTable()
         {
             List<string> result = new List<string>();
@@ -139,7 +139,7 @@ namespace dbclass2
             return result;
         }
 
-
+        //queries for the fact table to display fact table in form2
         public static List<string> GetFactTable()
         {
             List<string> result = new List<string>();
