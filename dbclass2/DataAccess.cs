@@ -87,7 +87,7 @@ namespace dbclass2
             }
         }
 
-
+        //will function as an alternative connection string for esmart2 but currently is setup for esmart1
         public static void Connect2()
         {
             try
@@ -136,7 +136,8 @@ namespace dbclass2
             return result;
         }
 
-        public static List<string> GetTableName2()
+        //queries for the dimension table to display the dimension table in form2
+        public static List<string> GetDimTable()
         {
             List<string> result = new List<string>();
 
@@ -148,7 +149,38 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables";
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'FACT%'";
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(reader["table_name"].ToString());
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
+        //queries for the fact table to display fact table in form2
+        public static List<string> GetFactTable()
+        {
+            List<string> result = new List<string>();
+
+            try
+            {
+                Connect2();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name LIKE 'FACT%'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
