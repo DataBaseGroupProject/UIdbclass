@@ -188,6 +188,9 @@ namespace dbclass2
         private void button4_Click(object sender, EventArgs e)
         {
 
+            this.Hide();
+            frm.Show();
+
             try
             {
                 if(FinalDimensionalTables.Count > 1)

@@ -59,6 +59,25 @@ namespace dbclass2
             }
         }
 
+
+        public static void Connect2()
+        {
+            try
+            {
+                // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+
+                con = new OracleConnection(oradb);  // C#
+
+                con.Open();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public static List<string> GetTableName()
         {
             List<string> result = new List<string>();
@@ -88,6 +107,39 @@ namespace dbclass2
 
             return result;
         }
+
+        public static List<string> GetTableName2()
+        {
+            List<string> result = new List<string>();
+
+            try
+            {
+                Connect2();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                cmd.CommandText = "SELECT table_name FROM user_tables";
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(reader["table_name"].ToString());
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
+
+
 
         public static List<string> GetNonKey(string selectedtable)
         {
@@ -546,16 +598,17 @@ namespace dbclass2
         }
 
         /// <summary>
-        ///  
+        ///  Load Data for Dimension Table
         /// </summary>
         /// <param name="Table"></param>
         /// <returns>Int Update Count</returns>
-        public static int LoadWarehouseData(FactTableInfo Table)
+
+        public static int LoadDimensionTableData(FactTableInfo Table)
         {
             int result = 0;
 
             string pk = string.Empty;
-          
+
             try
             {
                 Connect();
@@ -569,7 +622,7 @@ namespace dbclass2
                 foreach (var item in Table.Relations)
                 {
 
-                    
+
                 }
 
                 cmd.CommandText = sb.ToString();
