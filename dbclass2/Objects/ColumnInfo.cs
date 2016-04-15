@@ -22,5 +22,7 @@ namespace dbclass2.Objects
         public string DataLength { get; set; }
 
         public string ConstraintType { get; set; }
+
+        public string TransTable { get; set; }
     }
 }

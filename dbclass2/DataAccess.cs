@@ -10,15 +10,85 @@ namespace dbclass2
 {
     class DataAccess
     {
-        public static void CreateOracleConnection()
-        {
-        }
-
         public static OracleConnection con;
 
         public object CommandType { get; private set; }
 
-        public static void Connect()
+        public static AccessInfo ConnectionInfo { get; set; }
+
+        public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+        //public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+
+        public static string DevAccessInfo { get { return _DevAccessInfo; }}
+
+        public static void LoginConnect(AccessInfo Access = null)
+        {
+            try
+            {
+                string oradb = string.Empty;
+
+                if (Access == null)
+                {
+                    oradb = DevAccessInfo;
+                }
+                else
+                {
+                    oradb = "Data Source=//" + Access.SourceUrl + ";User Id=" + Access.SourceUserName + ";Password=" + Access.SourcePassword + ";";
+                }
+
+                con = new OracleConnection(oradb);  // C#
+
+                con.Open();
+
+                if (Access == null)
+                {
+                    oradb = DevAccessInfo;
+                }
+                else
+                {
+                    oradb = "Data Source=//" + Access.TargetUrl + ";User Id=" + Access.TargetUserName + ";Password=" + Access.TargetPassword + ";";
+                }
+
+                con = new OracleConnection(oradb);  // C#
+
+                con.Open();
+
+                ConnectionInfo = Access;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+      
+        public static void Connect(string ConnectionType = null)
+        {
+            try
+            {
+                string oradb = string.Empty;
+
+                if (ConnectionType == "Source")
+                    oradb = "Data Source=//" + ConnectionInfo.SourceUrl + ";User Id=" + ConnectionInfo.SourceUserName + ";Password=" + ConnectionInfo.SourcePassword + ";";
+                else if (ConnectionType == "Destination")
+                    oradb = "Data Source=//" + ConnectionInfo.TargetUrl + ";User Id=" + ConnectionInfo.TargetUserName + ";Password=" + ConnectionInfo.TargetPassword + ";";
+                else
+                    oradb = DevAccessInfo;
+
+                con = new OracleConnection(oradb);  // C#
+
+                con.Open();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        //will function as an alternative connection string for esmart2 but currently is setup for esmart1
+        public static void Connect2()
         {
             try
             {
@@ -33,29 +103,6 @@ namespace dbclass2
             {
 
                 throw;
-            }
-        }
-
-        /// <summary>
-        /// Connect with a User Name and Password
-        /// </summary>
-        /// <param name="source">DB URL</param>
-        /// <param name="user">User Name</param>
-        /// <param name="password">Password</param>
-        public static void Connect(string source, string user, string password)
-        {
-            try
-            {
-                string oradb = "Data Source=//" + source + ";User Id=" + user + ";Password=" + password + ";";
-
-                con = new OracleConnection(oradb);  // C#
-
-                con.Open();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
             }
         }
 
@@ -89,6 +136,71 @@ namespace dbclass2
             return result;
         }
 
+        //queries for the dimension table to display the dimension table in form2
+        public static List<string> GetDimTable()
+        {
+            List<string> result = new List<string>();
+
+            try
+            {
+                Connect2();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'FACT%'";
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(reader["table_name"].ToString());
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
+        //queries for the fact table to display fact table in form2
+        public static List<string> GetFactTable()
+        {
+            List<string> result = new List<string>();
+
+            try
+            {
+                Connect2();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name LIKE 'FACT%'";
+
+                OracleDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.Add(reader["table_name"].ToString());
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
+
+
+
         public static List<string> GetNonKey(string selectedtable)
         {
             List<string> result = new List<string>();
@@ -118,7 +230,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
+                    result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
                 }
 
                 Close();
@@ -153,7 +265,6 @@ namespace dbclass2
                                                                    AND cols.table_name = " + "'" + selectedtable + "')" +
                                           "AND table_name = " + "'" + selectedtable + "'");
 
-
                 cmd.CommandText = query;
 
                 OracleDataReader reader = cmd.ExecuteReader();
@@ -166,6 +277,7 @@ namespace dbclass2
                     obj.DataType = reader["data_type"].ToString();
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
+                    obj.TransTable = selectedtable;
 
                     result.Add(obj);
                 }
@@ -209,7 +321,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
+                    result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + tabname);
                 }
 
                 Close();
@@ -258,6 +370,7 @@ namespace dbclass2
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
                     obj.ConstraintType = reader["constraint_type"].ToString();
+                    obj.TransTable = tabname;
 
                     result.Add(obj);
                 }
@@ -504,11 +617,14 @@ namespace dbclass2
 
                             foreach(var key in column)
                             {
-                                d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                if(!d.PrimaryKeys.ContainsKey(key.Name))
+                                    d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
 
-                                fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                if (!fact.Columns.ContainsKey(key.Name))
+                                    fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
 
-                                fact.Relations.Add(table, key.Name);
+                                if (!fact.Relations.ContainsKey(table))
+                                    fact.Relations.Add(table, key.Name);
                             }
                         }
 
@@ -520,7 +636,8 @@ namespace dbclass2
 
                             foreach (var key in column)
                             {
-                                d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                if(!d.Columns.ContainsKey(key.Name))
+                                    d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
                             }
                         }
 
@@ -533,7 +650,7 @@ namespace dbclass2
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;
@@ -543,16 +660,17 @@ namespace dbclass2
         }
 
         /// <summary>
-        ///  
+        ///  Load Data for Dimension Table
         /// </summary>
         /// <param name="Table"></param>
         /// <returns>Int Update Count</returns>
-        public static int LoadWarehouseData(FactTableInfo Table)
+
+        public static int LoadDimensionTableData(FactTableInfo Table)
         {
             int result = 0;
 
             string pk = string.Empty;
-          
+
             try
             {
                 Connect();
@@ -566,7 +684,7 @@ namespace dbclass2
                 foreach (var item in Table.Relations)
                 {
 
-                    
+
                 }
 
                 cmd.CommandText = sb.ToString();
