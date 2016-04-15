@@ -10,24 +10,50 @@ namespace dbclass2
 {
     class DataAccess
     {
-        public static void CreateOracleConnection()
-        {
-        }
-
         public static OracleConnection con;
 
         public object CommandType { get; private set; }
 
-        public static void Connect()
+        public static AccessInfo ConnectionInfo { get; set; }
+
+        public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+        //public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+
+        public static string DevAccessInfo { get { return _DevAccessInfo; }}
+
+        public static void LoginConnect(AccessInfo Access = null)
         {
             try
             {
-                //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+                string oradb = string.Empty;
+
+                if (Access == null)
+                {
+                    oradb = DevAccessInfo;
+                }
+                else
+                {
+                    oradb = "Data Source=//" + Access.SourceUrl + ";User Id=" + Access.SourceUserName + ";Password=" + Access.SourcePassword + ";";
+                }
 
                 con = new OracleConnection(oradb);  // C#
 
                 con.Open();
+
+                if (Access == null)
+                {
+                    oradb = DevAccessInfo;
+                }
+                else
+                {
+                    oradb = "Data Source=//" + Access.TargetUrl + ";User Id=" + Access.TargetUserName + ";Password=" + Access.TargetPassword + ";";
+                }
+
+                con = new OracleConnection(oradb);  // C#
+
+                con.Open();
+
+                ConnectionInfo = Access;
             }
             catch (Exception)
             {
@@ -36,17 +62,19 @@ namespace dbclass2
             }
         }
 
-        /// <summary>
-        /// Connect with a User Name and Password
-        /// </summary>
-        /// <param name="source">DB URL</param>
-        /// <param name="user">User Name</param>
-        /// <param name="password">Password</param>
-        public static void Connect(string source, string user, string password)
+      
+        public static void Connect(string ConnectionType = null)
         {
             try
             {
-                string oradb = "Data Source=//" + source + ";User Id=" + user + ";Password=" + password + ";";
+                string oradb = string.Empty;
+
+                if (ConnectionType == "Source")
+                    oradb = "Data Source=//" + ConnectionInfo.SourceUrl + ";User Id=" + ConnectionInfo.SourceUserName + ";Password=" + ConnectionInfo.SourcePassword + ";";
+                else if (ConnectionType == "Destination")
+                    oradb = "Data Source=//" + ConnectionInfo.TargetUrl + ";User Id=" + ConnectionInfo.TargetUserName + ";Password=" + ConnectionInfo.TargetPassword + ";";
+                else
+                    oradb = DevAccessInfo;
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -64,8 +92,8 @@ namespace dbclass2
         {
             try
             {
-                // string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
                 con = new OracleConnection(oradb);  // C#
 
@@ -170,7 +198,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
+                    result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
                 }
 
                 Close();
@@ -217,6 +245,7 @@ namespace dbclass2
                     obj.DataType = reader["data_type"].ToString();
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
+                    obj.TransTable = selectedtable;
 
                     result.Add(obj);
                 }
@@ -260,7 +289,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "<->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")");
+                    result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + tabname);
                 }
 
                 Close();
@@ -309,6 +338,7 @@ namespace dbclass2
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
                     obj.ConstraintType = reader["constraint_type"].ToString();
+                    obj.TransTable = tabname;
 
                     result.Add(obj);
                 }

@@ -18,7 +18,7 @@ namespace dbclass2
     using System.Windows.Forms;
     using System.Data;
     using System.IO;
-
+    using Objects;
 
     public partial class Form1 : Form
     {
@@ -42,7 +42,13 @@ namespace dbclass2
             this.Size = new Size(w, h);
 
             checkedListBox1.CheckOnClick = true;
-            checkedListBox1.CheckOnClick = true;
+            checkedListBox1.HorizontalScrollbar = true;
+
+            checkedListBox2.CheckOnClick = true;
+            checkedListBox2.HorizontalScrollbar = true;
+
+            checkedListBox3.CheckOnClick = true;
+            checkedListBox3.HorizontalScrollbar = true;
 
             InitializeMyControl();     
         }
@@ -55,8 +61,17 @@ namespace dbclass2
         {
             try
             {
-                //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
-                DataAccess.Connect();
+                AccessInfo connect = new AccessInfo();
+
+                connect.SourceUrl = textBox1.Text.Trim();
+                connect.SourceUserName = textBox2.Text.Trim();
+                connect.SourcePassword = textBox3.Text.Trim();
+
+                connect.TargetUrl = textBox7.Text.Trim();
+                connect.TargetUserName = textBox6.Text.Trim();
+                connect.TargetPassword = textBox5.Text.Trim();
+
+                DataAccess.LoginConnect();
 
                 List<string> results = DataAccess.GetTableName();
 
@@ -88,7 +103,7 @@ namespace dbclass2
                 {
                     foreach (var item in listBox1.Items)
                     {
-                        string[] keyInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+                        string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
 
                         if (keyInfo.Count() > 1)
                             tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
@@ -106,7 +121,7 @@ namespace dbclass2
                 {
                     foreach (var item in listBox2.Items)
                     {
-                        string[] columnInfo = item.ToString().Split(new string[] { "<->" }, StringSplitOptions.None);
+                        string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
 
                         if (columnInfo.Count() > 1)
                             tb.Columns.Add(columnInfo[0], columnInfo[1]);
@@ -120,8 +135,6 @@ namespace dbclass2
                 FinalDimensionalTables.Add(tb);
 
                 DataAccess.CreateDimenstionalTable(tb);
-
-
 
                 MessageBox.Show("Table " + tb.TableName + " Created Successfully.");
 
@@ -284,7 +297,7 @@ namespace dbclass2
             catch (Exception)
             {
 
-                throw;
+                MessageBox.Show("An error was encountered. Please try again later.");
             }
         }
 
@@ -298,7 +311,7 @@ namespace dbclass2
                     {
                         if (!listBox1.Items.Contains(checkedListBox3.Items[i]))
                         {
-                            listBox1.Items.Add(checkedListBox3.Items[i]);
+                            listBox1.Items.Add(checkedListBox2.Items[i]);
                         }
                     }
                 }
@@ -306,7 +319,7 @@ namespace dbclass2
             catch (Exception)
             {
 
-                throw;
+                MessageBox.Show("An error was encountered. Please try again later.");
             }
         }
         
@@ -327,7 +340,7 @@ namespace dbclass2
             }
             catch (Exception)
             {
-                throw;
+                MessageBox.Show("An error was encountered. Please try again later.");
             }
         }
 
@@ -347,7 +360,7 @@ namespace dbclass2
             catch (Exception)
             {
 
-                throw;
+                MessageBox.Show("An error was encountered. Please try again later.");
             }
         }
     }
