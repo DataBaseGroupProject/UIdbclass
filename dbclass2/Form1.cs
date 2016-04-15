@@ -349,7 +349,7 @@ namespace dbclass2
             Application.Exit();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e)
         {
             try
             {
