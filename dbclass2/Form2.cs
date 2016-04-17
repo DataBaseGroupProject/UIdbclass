@@ -41,7 +41,33 @@ namespace dbclass2
         //This method will connect to the esmart2 database and will display the tables from esmart2 in a listbox as a facttable listbox and a dimension table listbox
         private void button1_Click(object sender, EventArgs e)
         {
-            DisplayListBox();
+            try
+            {
+
+                DataAccess.Connect();
+                List<string> res = DataAccess.GetFactTable();
+
+                foreach (var itm in res)
+                {
+                    listBox1.Items.Add(itm);
+                }
+
+
+
+                List<string> dim = DataAccess.GetDimTable();
+                foreach (var element in dim)
+                {
+                    listBox2.Items.Add(element);
+                }
+
+                MessageBox.Show("You are connected!");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid User Name/Password");
+
+            }
+
 
             //try
             //{
@@ -84,26 +110,27 @@ namespace dbclass2
 
         public void DisplayListBox()
         {
-            try {
+            try
+            {
 
                 DataAccess.Connect();
-            List<string> res = DataAccess.GetFactTable();
+                List<string> res = DataAccess.GetFactTable();
 
-            foreach (var itm in res)
-            {
-                listBox1.Items.Add(itm);
+                foreach (var itm in res)
+                {
+                    listBox1.Items.Add(itm);
+                }
+
+
+
+                List<string> dim = DataAccess.GetDimTable();
+                foreach (var element in dim)
+                {
+                    listBox2.Items.Add(element);
+                }
+
+                MessageBox.Show("You are connected!");
             }
-
-
-
-            List<string> dim = DataAccess.GetDimTable();
-            foreach (var element in dim)
-            {
-                listBox2.Items.Add(element);
-            }
-
-            MessageBox.Show("You are connected!");
-        }
             catch (Exception)
             {
                 MessageBox.Show("Invalid User Name/Password");
@@ -111,32 +138,30 @@ namespace dbclass2
             }
 
 
-}
+        }
 
 
 
 
-//try
-//{
-//    //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
-//   // DataAccess.Connect();
+        //try
+        //{
+        //    //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
+        //   // DataAccess.Connect();
 
-//    //List<string> results = DataAccess.GetTableName();
+        //    //List<string> results = DataAccess.GetTableName();
 
-//    //foreach (var item in results)
-//    {
-//         listBox1.Items.Add(item);
-//    }
+        //    //foreach (var item in results)
+        //    {
+        //         listBox1.Items.Add(item);
+        //    }
 
-//    MessageBox.Show("You are connected!");
-//}
-//catch (Exception)
-//{
-//    MessageBox.Show("Invalid User Name/Password");
+        //    MessageBox.Show("You are connected!");
+        //}
+        //catch (Exception)
+        //{
+        //    MessageBox.Show("Invalid User Name/Password");
 
-//}
-
-
+        //}
 
 
 
@@ -144,7 +169,9 @@ namespace dbclass2
 
 
 
-private void textBox3_TextChanged(object sender, EventArgs e)
+
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
         {
 
         }
