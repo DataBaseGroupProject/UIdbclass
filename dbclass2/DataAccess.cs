@@ -384,7 +384,7 @@ namespace dbclass2
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
                                   JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
                                   
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U') AND (AllColumns.nullable = 'N') 
                                         And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
@@ -682,7 +682,12 @@ namespace dbclass2
                             foreach (var key in column)
                             {
                                 if(!d.Columns.ContainsKey(key.Name))
-                                    d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                {
+                                    if(key.DataType.ToLower() == "date")
+                                        d.Columns.Add(key.Name, key.DataType);
+                                    else
+                                        d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                }
                             }
                         }
 

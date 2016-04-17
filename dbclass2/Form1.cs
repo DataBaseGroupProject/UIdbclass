@@ -255,7 +255,7 @@ namespace dbclass2
 
                             iRet = DataAccess.LoadDataWarehouseDimensions(selectedTables);
 
-                            iRet += DataAccess.LoadDataWarehouseDimensions(selectedTables);
+                            //iRet += DataAccess.LoadDataWarehouseDimensions(selectedTables);
 
                             if (iRet == -1)
                             {
