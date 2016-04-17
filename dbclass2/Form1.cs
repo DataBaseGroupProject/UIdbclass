@@ -206,7 +206,7 @@ namespace dbclass2
 
             try
             {
-                if(FinalDimensionalTables.Count > 1)
+                if (FinalDimensionalTables.Count > 1)
                 {
                     FactTableInfo fact = new FactTableInfo();
 
@@ -237,21 +237,30 @@ namespace dbclass2
                 }
                 else
                 {
-                    if(checkedListBox1.SelectedItems.Count > 0)
+                    if (checkedListBox1.SelectedItems.Count > 0)
                     {
                         List<string> selectedTables = new List<string>();
 
-                        foreach(var item in checkedListBox1.SelectedItems)
+                        foreach (var item in checkedListBox1.SelectedItems)
                             selectedTables.Add(item.ToString());
 
                         int iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
-                        if(iRet == -1)
+                        if (iRet == -1)
+                        {
                             MessageBox.Show("Data Warehouse Created Successfully.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please Select At least One Tables to Build the Data Warehouse.");
+
+                            iRet = DataAccess.LoadDataWarhouse(selectedTables);
+
+                            if (iRet == -1)
+                            {
+                                MessageBox.Show("Data Warehouse Data Loaded Successfully.");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Please Select At least One Tables to Build the Data Warehouse.");
+                        }
                     }
                 }
             }
