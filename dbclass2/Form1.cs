@@ -94,7 +94,7 @@ namespace dbclass2
             this.Hide();
             frm.Show();
 
-            frm.DisplayListBox();
+          //  frm.DisplayListBox();
 
 
 }

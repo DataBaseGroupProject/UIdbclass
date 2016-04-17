@@ -86,7 +86,7 @@ namespace dbclass2
         {
             try {
 
-                DataAccess.Connect("Destination");
+                DataAccess.Connect();
             List<string> res = DataAccess.GetFactTable();
 
             foreach (var itm in res)
