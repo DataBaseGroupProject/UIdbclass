@@ -16,8 +16,8 @@ namespace dbclass2
 
         public static AccessInfo ConnectionInfo { get; set; }
 
-        public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-        //public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+        //public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+        public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
         public static string DevAccessInfo { get { return _DevAccessInfo; }}
 
@@ -540,27 +540,6 @@ namespace dbclass2
 
             string pk = string.Empty;
 
-            //Humam- Testing Code
-            //---------------------
-            //Table = new FactTableInfo();
-
-            //Table.TableName = "ABC";
-
-            //Table.PrimaryKeys = new Dictionary<string, string>();
-
-            //Table.PrimaryKeys.Add("Dir", "Int");
-
-            //Table.Columns = new Dictionary<string, string>();
-
-            //Table.Columns.Add("Col3", "Int");
-            //Table.Columns.Add("PID", "Int");
-
-            //Table.Relations = new Dictionary<string, string>();
-
-            //Table.Relations.Add("DOC", "PID");
-
-            //---------------------
-
             try
             {
                 if (DoesTableExist(Table.TableName) > 0)
@@ -645,7 +624,9 @@ namespace dbclass2
 
                         List<ColumnInfo> column = GetPrimaryKeyObject(table);
 
-                        if(column.Count > 0)
+                        column.RemoveAll(i => i.ConstraintType != "P");
+
+                        if (column.Count > 0)
                         {
                             d.PrimaryKeys = new Dictionary<string, string>();
 
@@ -693,9 +674,11 @@ namespace dbclass2
             return result;
         }
 
-        public static int LoadDataWarhouse(List<string> tables)
+        public static int LoadDataWarehouseDimensions(List<string> tables)
         {
             int result = 0;
+
+            int index = 0;
 
             try
             {
@@ -714,8 +697,6 @@ namespace dbclass2
                     fact.PrimaryKeys = new Dictionary<string, string>();
 
                     fact.Columns = new Dictionary<string, string>();
-
-                    fact.Relations = new Dictionary<string, string>();
 
                     fact.TableName = "Auto_Generated_Fact_Table";
 
@@ -740,13 +721,47 @@ namespace dbclass2
                                 sb.AppendLine(item.Name + ", ");
                             }
 
-                            var index = sb.ToString().LastIndexOf(',');
+                            index = sb.ToString().LastIndexOf(',');
 
                             if (index >= 0)
                                 sb.Remove(index, 1);
 
                             sb.AppendLine("FROM " + table);
                         }
+
+                        sb.AppendLine(")");
+                    }
+
+                    foreach(var table in tables)
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        sb.AppendLine("INSERT INTO " + fact.TableName);
+
+                        sb.AppendLine("(");
+
+                        List<ColumnInfo>  column = GetPrimaryKeyObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            foreach (var key in column)
+                            {
+                                sb.AppendLine("SELECT ");
+
+                                sb.AppendLine(key.Name);
+
+                                sb.AppendLine("FROM ");
+
+                                sb.AppendLine(table);
+
+                                sb.AppendLine("UNION");
+                            }
+                        }
+
+                        index = sb.ToString().LastIndexOf("UNION");
+
+                        if (index >= 0)
+                            sb.Remove(index, 5);
 
                         sb.AppendLine(")");
                     }

@@ -250,7 +250,9 @@ namespace dbclass2
                         {
                             MessageBox.Show("Data Warehouse Created Successfully.");
 
-                            iRet = DataAccess.LoadDataWarhouse(selectedTables);
+                            iRet = DataAccess.LoadDataWarehouseDimensions(selectedTables);
+
+                            iRet += DataAccess.LoadDataWarehouseDimensions(selectedTables);
 
                             if (iRet == -1)
                             {
