@@ -173,7 +173,7 @@ namespace dbclass2
 
             try
             {
-                Connect("Destination");
+                Connect();
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -204,7 +204,7 @@ namespace dbclass2
 
             try
             {
-                Connect("Destination");
+                Connect();
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -641,106 +641,106 @@ namespace dbclass2
 
 //Insert Data into Dimensional Table
 
-        public static int InsertDimensionalTable(string dimtabname,List<string> list1, List<string> list2)
-        {
-            try
-            {
-                DimensionalTableInfo tb = new DimensionalTableInfo();
+        //public static int InsertDimensionalTable(string dimtabname,List<string> list1, List<string> list2)
+        //{
+        //    try
+        //    {
+        //        DimensionalTableInfo tb = new DimensionalTableInfo();
 
-                tb.TableName = textBox4.Text;
+        //        tb.TableName = textBox4.Text;
 
-                tb.PrimaryKeys = new Dictionary<string, string>();
+        //        tb.PrimaryKeys = new Dictionary<string, string>();
 
-                if (listBox1.Items.Count > 0)
-                {
-                    foreach (var item in listBox1.Items)
-                    {
-                        string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+        //        if (listBox1.Items.Count > 0)
+        //        {
+        //            foreach (var item in listBox1.Items)
+        //            {
+        //                string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
 
-                        if (keyInfo.Count() > 1)
-                            tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Please Select at least One Primary Key.");
-                }
-
-
-                tb.Columns = new Dictionary<string, string>();
-
-                if (listBox2.Items.Count > 0)
-                {
-                    foreach (var item in listBox2.Items)
-                    {
-                        string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
-
-                        if (columnInfo.Count() > 1)
-                            tb.Columns.Add(columnInfo[0], columnInfo[1]);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Please Select at least One Column.");
-                }
+        //                if (keyInfo.Count() > 1)
+        //                    tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Please Select at least One Primary Key.");
+        //        }
 
 
-                int result = 0;
+        //        tb.Columns = new Dictionary<string, string>();
 
-            string pk = string.Empty;
+        //        if (listBox2.Items.Count > 0)
+        //        {
+        //            foreach (var item in listBox2.Items)
+        //            {
+        //                string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
 
-            try
-            {
-                if (DoesTableExist(dimtabname) > 0)
-                    return -99;
-
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-
-                StringBuilder sb = new StringBuilder();
-
-                Table.TableName = Table.TableName.Replace(' ', '_');
-
-                sb.AppendLine(("CREATE TABLE " + Table.TableName));
-
-                sb.AppendLine((" ( "));
-
-                foreach (var item in Table.PrimaryKeys)
-                {
-                    sb.AppendLine(item.Key + " " + item.Value + ",");
-
-                    pk = pk + item.Key + ",";
-                }
-
-                foreach (var item in Table.Columns)
-                {
-                    sb.AppendLine(item.Key + " " + item.Value + ",");
-                }
-
-                pk = pk.TrimEnd(',');
-
-                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ") ");
-
-                sb.AppendLine((")"));
-
-                cmd.CommandText = sb.ToString();
-
-                result = cmd.ExecuteNonQuery();
+        //                if (columnInfo.Count() > 1)
+        //                    tb.Columns.Add(columnInfo[0], columnInfo[1]);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            MessageBox.Show("Please Select at least One Column.");
+        //        }
 
 
+        //        int result = 0;
 
-                Close();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+        //    string pk = string.Empty;
 
-            return result;
-        }
+        //    try
+        //    {
+        //        if (DoesTableExist(dimtabname) > 0)
+        //            return -99;
+
+        //        Connect();
+
+        //        OracleCommand cmd = new OracleCommand();
+
+        //        cmd.Connection = con;
+
+        //        StringBuilder sb = new StringBuilder();
+
+        //        Table.TableName = Table.TableName.Replace(' ', '_');
+
+        //        sb.AppendLine(("CREATE TABLE " + Table.TableName));
+
+        //        sb.AppendLine((" ( "));
+
+        //        foreach (var item in Table.PrimaryKeys)
+        //        {
+        //            sb.AppendLine(item.Key + " " + item.Value + ",");
+
+        //            pk = pk + item.Key + ",";
+        //        }
+
+        //        foreach (var item in Table.Columns)
+        //        {
+        //            sb.AppendLine(item.Key + " " + item.Value + ",");
+        //        }
+
+        //        pk = pk.TrimEnd(',');
+
+        //        sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ") ");
+
+        //        sb.AppendLine((")"));
+
+        //        cmd.CommandText = sb.ToString();
+
+        //        result = cmd.ExecuteNonQuery();
+
+
+
+        //        Close();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //    return result;
+        //}
 
         /// <summary>
         /// Create Fact Table 
