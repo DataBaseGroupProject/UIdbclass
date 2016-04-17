@@ -17,7 +17,11 @@ namespace dbclass2
 
         public static AccessInfo ConnectionInfo { get; set; }
 
+<<<<<<< HEAD
         //public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=karthika86;";
+=======
+        //public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+>>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
         public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
         public static string DevAccessInfo { get { return _DevAccessInfo; }}
@@ -152,13 +156,13 @@ namespace dbclass2
 
             try
             {
-                Connect();                
+                Connect();
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables where table_name not like '%LOG%' and table_name not like '%$%'";
+                cmd.CommandText = "SELECT table_name FROM user_tables";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -240,82 +244,8 @@ namespace dbclass2
 
 
 
+
         public static List<string> GetNonKey(string selectedtable)
-        {
-            List<string> result = new List<string>();
-
-            try
-            {
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-                string subqry = ("SELECT cols.column_name as column_name FROM all_constraints cons, all_cons_columns cols WHERE (cons.constraint_type = 'C' or cons.constraint_type = 'P' or cons.constraint_type = 'R') AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner AND cols.table_name = " + "'" + selectedtable + "'");
-
-                cmd.CommandText = subqry;
-                OracleDataReader reader1 = cmd.ExecuteReader();
-                List<string> allkeycols = new List<string>();
-                StringBuilder allkeyvals = new StringBuilder();
-                while (reader1.Read())
-                {
-                        allkeycols.Add(reader1["column_name"].ToString());                 
-                }
-                int count = allkeycols.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    if (i != (count-1))
-                    {
-                        allkeyvals.Append("'");
-                        allkeyvals.AppendFormat(allkeycols[i]);
-                        allkeyvals.Append("',");
-                    }
-                    else
-                    {
-                        allkeyvals.Append("'");
-                        allkeyvals.AppendFormat(allkeycols[i]);
-                        allkeyvals.Append("'");
-                    }
-                }
-
-                /*string query = (@"SELECT column_name, data_type, nullable, data_length
-                                  FROM all_tab_cols
-                                  WHERE  column_name Not In (SELECT cols.column_name
-                                                             FROM all_constraints cons, all_cons_columns cols
-                                                             WHERE cons.constraint_type = 'P'
-                                                                   AND cons.constraint_name = cols.constraint_name
-                                                                   AND cons.owner = cols.owner 
-                                                                   AND cols.table_name = " + "'" + selectedtable + "')" +
-                                          "AND table_name = " + "'" + selectedtable + "'");*/
-
-                string query = ("SELECT column_name, data_type, nullable, data_length FROM all_tab_cols WHERE column_name Not In (" + allkeyvals + ")" + "AND table_name = " + "'" + selectedtable + "'");
-
-                cmd.CommandText = query;
-
-                OracleDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    if (reader["data_type"].ToString().Contains("DATE"))
-                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "<-->" + selectedtable);
-                    else
-                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
-                    //result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
-                }
-
-                Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return result;
-        }
-
-
-
-        /*public static List<string> GetNonKey(string selectedtable)
         {
             List<string> result = new List<string>();
 
@@ -344,11 +274,7 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    if (reader["data_type"].ToString().Contains("DATE"))
-                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "<-->" + selectedtable);
-                    else
-                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
-                    //result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
+                    result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
                 }
 
                 Close();
@@ -359,7 +285,7 @@ namespace dbclass2
             }
 
             return result;
-        }*/
+        }
 
         public static List<ColumnInfo> GetNonKeyObject(string selectedtable)
         {
@@ -430,7 +356,7 @@ namespace dbclass2
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
                                   JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
                                   
-                                  WHERE (Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
                                         And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
@@ -472,7 +398,7 @@ namespace dbclass2
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
                                   JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
                                   
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U') AND (AllColumns.nullable = 'N') 
                                         And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
@@ -637,14 +563,18 @@ namespace dbclass2
 
                 result = cmd.ExecuteNonQuery();
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
                 Close();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+<<<<<<< HEAD
 
             return result;
         }
@@ -748,6 +678,8 @@ namespace dbclass2
         //    {
         //        throw ex;
         //    }
+=======
+>>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
 
         //    return result;
         //}
@@ -762,27 +694,6 @@ namespace dbclass2
             int result = 0;
 
             string pk = string.Empty;
-
-            //Humam- Testing Code
-            //---------------------
-            //Table = new FactTableInfo();
-
-            //Table.TableName = "ABC";
-
-            //Table.PrimaryKeys = new Dictionary<string, string>();
-
-            //Table.PrimaryKeys.Add("Dir", "Int");
-
-            //Table.Columns = new Dictionary<string, string>();
-
-            //Table.Columns.Add("Col3", "Int");
-            //Table.Columns.Add("PID", "Int");
-
-            //Table.Relations = new Dictionary<string, string>();
-
-            //Table.Relations.Add("DOC", "PID");
-
-            //---------------------
 
             try
             {
@@ -868,7 +779,9 @@ namespace dbclass2
 
                         List<ColumnInfo> column = GetPrimaryKeyObject(table);
 
-                        if(column.Count > 0)
+                        column.RemoveAll(i => i.ConstraintType != "P");
+
+                        if (column.Count > 0)
                         {
                             d.PrimaryKeys = new Dictionary<string, string>();
 
@@ -894,7 +807,12 @@ namespace dbclass2
                             foreach (var key in column)
                             {
                                 if(!d.Columns.ContainsKey(key.Name))
-                                    d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                {
+                                    if(key.DataType.ToLower() == "date")
+                                        d.Columns.Add(key.Name, key.DataType);
+                                    else
+                                        d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                }
                             }
                         }
 
@@ -910,6 +828,208 @@ namespace dbclass2
             catch (Exception ex)
             {
 
+                throw;
+            }
+
+            return result;
+        }
+
+        public static int LoadDataWarehouseDimensions(List<string> tables)
+        {
+            int result = 0;
+
+            int index = 0;
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                if (tables.Count > 0)
+                {
+                    FactTableInfo fact = new FactTableInfo();
+
+                    fact.PrimaryKeys = new Dictionary<string, string>();
+
+                    fact.Columns = new Dictionary<string, string>();
+
+                    fact.TableName = "Auto_Generated_Fact_Table";
+
+                    foreach (var table in tables)
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        d.TableName = table + "_Dimensional";
+
+                        List<ColumnInfo> column = GetAllColumnsObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            sb.AppendLine("INSERT INTO " + d.TableName);
+
+                            sb.AppendLine("(");
+
+                            foreach (var item in column)
+                            {
+                                sb.AppendLine(item.Name + ", ");
+                            }
+
+                            index = sb.ToString().LastIndexOf(',');
+
+                            if (index >= 0)
+                                sb.Remove(index, 1);
+
+                            sb.AppendLine(")");
+
+                            sb.AppendLine("(");
+
+                            sb.AppendLine("SELECT ");
+
+                            foreach (var item in column)
+                            {
+                                sb.AppendLine(item.Name + ", ");
+                            }
+
+                            index = sb.ToString().LastIndexOf(',');
+
+                            if (index >= 0)
+                                sb.Remove(index, 1);
+
+                            sb.AppendLine("FROM " + table);
+                        }
+
+                        sb.AppendLine(")");
+                    }
+
+                    cmd.CommandText = sb.ToString();
+
+                    result += cmd.ExecuteNonQuery();
+
+                    Close();
+
+                    Connect();
+
+                    cmd = new OracleCommand();
+
+                    cmd.Connection = con;
+
+                    sb = new StringBuilder();
+
+                    int ID = new Random().Next(1, 1000000000);
+
+                    foreach (var table in tables)
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        sb.AppendLine("INSERT INTO " + fact.TableName);
+
+                        List<ColumnInfo> column = GetAllColumnsObject("AUTO_GENERATED_FACT_TABLE");
+
+                        if (column.Count > 0)
+                        {
+                            sb.AppendLine("(");
+
+                            foreach (var item in column)
+                            {
+                                sb.AppendLine(item.Name + ", ");
+                            }
+
+                            index = sb.ToString().LastIndexOf(',');
+
+                            if (index >= 0)
+                                sb.Remove(index, 1);
+
+                            sb.AppendLine(")");
+                        }
+
+                        sb.AppendLine("(");
+
+                        column = GetPrimaryKeyObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            foreach (var key in column)
+                            {
+                                int i = column.IndexOf(key);
+
+                                sb.AppendLine("SELECT ");
+
+                                sb.AppendLine("ROWNUM AS ID, ");
+
+                                sb.AppendLine(key.Name);
+
+                                sb.AppendLine("FROM ");
+
+                                sb.AppendLine(table);
+
+                                sb.AppendLine("UNION");
+                            }
+                        }
+
+                        index = sb.ToString().LastIndexOf("UNION");
+
+                        if (index >= 0)
+                            sb.Remove(index, 5);
+
+                        sb.AppendLine(")");
+                    }
+
+                    cmd.CommandText = sb.ToString();
+
+                    result += cmd.ExecuteNonQuery();
+
+                    Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        ///  Load Data for Dimension Table
+        /// </summary>
+        /// <param name="Table"></param>
+        /// <returns>Int Update Count</returns>
+        public static int LoadDimensionTableData(FactTableInfo Table)
+        {
+            int result = 0;
+
+            string pk = string.Empty;
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var item in Table.Relations)
+                {
+
+
+                }
+
+                cmd.CommandText = sb.ToString();
+
+                result = cmd.ExecuteNonQuery();
+
+                Close();
+            }
+            catch (Exception)
+            {
                 throw;
             }
 
@@ -989,48 +1109,6 @@ namespace dbclass2
 
             return result;
         }
-
-        /// <summary>
-        ///  Load Data for Dimension Table
-        /// </summary>
-        /// <param name="Table"></param>
-        /// <returns>Int Update Count</returns>
-        public static int LoadDimensionTableData(FactTableInfo Table)
-        {
-            int result = 0;
-
-            string pk = string.Empty;
-
-            try
-            {
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-
-                StringBuilder sb = new StringBuilder();
-
-                foreach (var item in Table.Relations)
-                {
-
-
-                }
-
-                cmd.CommandText = sb.ToString();
-
-                result = cmd.ExecuteNonQuery();
-
-                Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return result;
-        }
-
 
         public static void Close()
         {
