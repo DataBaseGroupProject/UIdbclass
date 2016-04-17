@@ -138,12 +138,15 @@ namespace dbclass2
 
                 MessageBox.Show("Table " + tb.TableName + " Created Successfully.");
 
+                //DataAccess.InsertDimensionalTable(tb.TableName,listBox1,listBox2.Items);
+
                 ClearExistingTableInfoList();
                 ClearNewTableInfoList();
                 textBox4.Text = string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                //Console.Out(ex.StackTrace);
                 MessageBox.Show("Failed to Create Table");
             }
         }
@@ -280,6 +283,7 @@ namespace dbclass2
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
                     if (checkedListBox1.GetSelected(i) || checkedListBox1.GetItemChecked(i))
+                    //if (checkedListBox1.GetSelected(i))// checkedListBox1.GetItemChecked(i))
                     {
                         string tab = (string)checkedListBox1.Items[i];
                         results = DataAccess.GetPrimaryKey(tab);
@@ -318,7 +322,7 @@ namespace dbclass2
                 {
                     if (checkedListBox2.GetSelected(i) || checkedListBox2.GetItemChecked(i))
                     {
-                        if (!listBox1.Items.Contains(checkedListBox3.Items[i]))
+                        if (!listBox1.Items.Contains(checkedListBox2.Items[i]))
                         {
                             listBox1.Items.Add(checkedListBox2.Items[i]);
                         }
