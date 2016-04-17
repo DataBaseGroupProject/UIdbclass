@@ -16,8 +16,9 @@ namespace dbclass2
 
         public static AccessInfo ConnectionInfo { get; set; }
 
-        public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-        //public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+       // public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+        public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+      //  public static string _Form2Access = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
 
         public static string DevAccessInfo { get { return _DevAccessInfo; }}
 
@@ -62,7 +63,37 @@ namespace dbclass2
             }
         }
 
-      
+
+
+        //public static void Form2Connect(AccessInfo Access = null)
+        //{
+        //    try
+        //    {
+        //        string oradb = string.Empty;
+
+        //        if (Access == null)
+        //        {
+        //            oradb = _Form2Access;
+        //        }
+        //        else
+        //        {
+        //            oradb = "Data Source=//" + Access.TargetUrl + ";User Id=" + Access.TargetUserName + ";Password=" + Access.TargetPassword + ";";
+        //        }
+
+        //        con = new OracleConnection(oradb);  // C#
+
+        //        con.Open();
+
+        //        ConnectionInfo = Access;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+
+
         public static void Connect(string ConnectionType = null)
         {
             try
@@ -88,23 +119,23 @@ namespace dbclass2
         }
 
         //will function as an alternative connection string for esmart2 but currently is setup for esmart1
-        public static void Connect2()
-        {
-            try
-            {
-                string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-                //string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
+        //public static void Connect2()
+        //{
+        //    try
+        //    {
+        //        //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+        //        string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
 
-                con = new OracleConnection(oradb);  // C#
+        //        con = new OracleConnection(oradb);  // C#
 
-                con.Open();
-            }
-            catch (Exception)
-            {
+        //        con.Open();
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
         public static List<string> GetTableName()
         {
@@ -143,7 +174,7 @@ namespace dbclass2
 
             try
             {
-                Connect2();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -174,7 +205,7 @@ namespace dbclass2
 
             try
             {
-                Connect2();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 

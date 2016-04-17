@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Oracle.DataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,6 +13,8 @@ namespace dbclass2
 {
     public partial class MappingTable : Form
     {
+
+        OracleConnection con;
         public MappingTable()
         {
             InitializeComponent();
@@ -24,7 +27,31 @@ namespace dbclass2
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            dataGridView1.DataSource = null;
+
+            string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
+
+                      con = new OracleConnection(oradb);  // C#
+
+                     con.Open();
+
+
+
+
+
+                       OracleCommand cmd = new OracleCommand("select * from patient", con);
+
+                       cmd.CommandType = CommandType.Text;
+                       DataSet ds = new DataSet();
+                        OracleDataAdapter da = new OracleDataAdapter();
+                        da.SelectCommand = cmd;
+                        da.Fill(ds);
+                       dataGridView1.DataSource = ds.Tables[0];
+
+
+
+
+
+           
             textBox1.Clear();
         }
 
