@@ -749,6 +749,20 @@ namespace dbclass2
 
                             sb.AppendLine("(");
 
+                            foreach (var item in column)
+                            {
+                                sb.AppendLine(item.Name + ", ");
+                            }
+
+                            index = sb.ToString().LastIndexOf(',');
+
+                            if (index >= 0)
+                                sb.Remove(index, 1);
+
+                            sb.AppendLine(")");
+
+                            sb.AppendLine("(");
+
                             sb.AppendLine("SELECT ");
 
                             foreach (var item in column)
@@ -767,21 +781,60 @@ namespace dbclass2
                         sb.AppendLine(")");
                     }
 
-                    foreach(var table in tables)
+                    cmd.CommandText = sb.ToString();
+
+                    result += cmd.ExecuteNonQuery();
+
+                    Close();
+
+                    Connect();
+
+                    cmd = new OracleCommand();
+
+                    cmd.Connection = con;
+
+                    sb = new StringBuilder();
+
+                    int ID = new Random().Next(1, 1000000000);
+
+                    foreach (var table in tables)
                     {
                         DimensionalTableInfo d = new DimensionalTableInfo();
 
                         sb.AppendLine("INSERT INTO " + fact.TableName);
 
+                        List<ColumnInfo> column = GetAllColumnsObject("AUTO_GENERATED_FACT_TABLE");
+
+                        if (column.Count > 0)
+                        {
+                            sb.AppendLine("(");
+
+                            foreach (var item in column)
+                            {
+                                sb.AppendLine(item.Name + ", ");
+                            }
+
+                            index = sb.ToString().LastIndexOf(',');
+
+                            if (index >= 0)
+                                sb.Remove(index, 1);
+
+                            sb.AppendLine(")");
+                        }
+
                         sb.AppendLine("(");
 
-                        List<ColumnInfo>  column = GetPrimaryKeyObject(table);
+                        column = GetPrimaryKeyObject(table);
 
                         if (column.Count > 0)
                         {
                             foreach (var key in column)
                             {
+                                int i = column.IndexOf(key);
+
                                 sb.AppendLine("SELECT ");
+
+                                sb.AppendLine("ROWNUM AS ID, ");
 
                                 sb.AppendLine(key.Name);
 
@@ -803,7 +856,7 @@ namespace dbclass2
 
                     cmd.CommandText = sb.ToString();
 
-                    result = cmd.ExecuteNonQuery();
+                    result += cmd.ExecuteNonQuery();
 
                     Close();
                 }
