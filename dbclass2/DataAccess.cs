@@ -16,7 +16,7 @@ namespace dbclass2
 
         public static AccessInfo ConnectionInfo { get; set; }
 
-        public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+        public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=karthika86;";
         //public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
         public static string DevAccessInfo { get { return _DevAccessInfo; }}
@@ -112,13 +112,13 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect();                
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables";
+                cmd.CommandText = "SELECT table_name FROM user_tables where table_name not like '%LOG%' and table_name not like '%$%'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -200,8 +200,82 @@ namespace dbclass2
 
 
 
-
         public static List<string> GetNonKey(string selectedtable)
+        {
+            List<string> result = new List<string>();
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+                string subqry = ("SELECT cols.column_name as column_name FROM all_constraints cons, all_cons_columns cols WHERE (cons.constraint_type = 'C' or cons.constraint_type = 'P' or cons.constraint_type = 'R') AND cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner AND cols.table_name = " + "'" + selectedtable + "'");
+
+                cmd.CommandText = subqry;
+                OracleDataReader reader1 = cmd.ExecuteReader();
+                List<string> allkeycols = new List<string>();
+                StringBuilder allkeyvals = new StringBuilder();
+                while (reader1.Read())
+                {
+                        allkeycols.Add(reader1["column_name"].ToString());                 
+                }
+                int count = allkeycols.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if (i != (count-1))
+                    {
+                        allkeyvals.Append("'");
+                        allkeyvals.AppendFormat(allkeycols[i]);
+                        allkeyvals.Append("',");
+                    }
+                    else
+                    {
+                        allkeyvals.Append("'");
+                        allkeyvals.AppendFormat(allkeycols[i]);
+                        allkeyvals.Append("'");
+                    }
+                }
+
+                /*string query = (@"SELECT column_name, data_type, nullable, data_length
+                                  FROM all_tab_cols
+                                  WHERE  column_name Not In (SELECT cols.column_name
+                                                             FROM all_constraints cons, all_cons_columns cols
+                                                             WHERE cons.constraint_type = 'P'
+                                                                   AND cons.constraint_name = cols.constraint_name
+                                                                   AND cons.owner = cols.owner 
+                                                                   AND cols.table_name = " + "'" + selectedtable + "')" +
+                                          "AND table_name = " + "'" + selectedtable + "'");*/
+
+                string query = ("SELECT column_name, data_type, nullable, data_length FROM all_tab_cols WHERE column_name Not In (" + allkeyvals + ")" + "AND table_name = " + "'" + selectedtable + "'");
+
+                cmd.CommandText = query;
+
+                OracleDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    if (reader["data_type"].ToString().Contains("DATE"))
+                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "<-->" + selectedtable);
+                    else
+                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
+                    //result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
+
+
+        /*public static List<string> GetNonKey(string selectedtable)
         {
             List<string> result = new List<string>();
 
@@ -230,7 +304,11 @@ namespace dbclass2
 
                 while (reader.Read())
                 {
-                    result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
+                    if (reader["data_type"].ToString().Contains("DATE"))
+                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "<-->" + selectedtable);
+                    else
+                        result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
+                    //result.Add(reader["column_name"].ToString() + "<-->" + reader["data_type"].ToString() + "(" + reader["data_length"].ToString() + ")" + "<-->" + selectedtable);
                 }
 
                 Close();
@@ -241,7 +319,7 @@ namespace dbclass2
             }
 
             return result;
-        }
+        }*/
 
         public static List<ColumnInfo> GetNonKeyObject(string selectedtable)
         {
@@ -312,7 +390,7 @@ namespace dbclass2
                                   JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
                                   JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
                                   
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
+                                  WHERE (Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
                                         And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
@@ -484,6 +562,111 @@ namespace dbclass2
                 cmd.CommandText = sb.ToString();
 
                 result = cmd.ExecuteNonQuery();
+
+
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return result;
+        }
+
+//Insert Data into Dimensional Table
+
+        public static int InsertDimensionalTable(string dimtabname,List<string> list1, List<string> list2)
+        {
+            try
+            {
+                DimensionalTableInfo tb = new DimensionalTableInfo();
+
+                tb.TableName = textBox4.Text;
+
+                tb.PrimaryKeys = new Dictionary<string, string>();
+
+                if (listBox1.Items.Count > 0)
+                {
+                    foreach (var item in listBox1.Items)
+                    {
+                        string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+
+                        if (keyInfo.Count() > 1)
+                            tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please Select at least One Primary Key.");
+                }
+
+
+                tb.Columns = new Dictionary<string, string>();
+
+                if (listBox2.Items.Count > 0)
+                {
+                    foreach (var item in listBox2.Items)
+                    {
+                        string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+
+                        if (columnInfo.Count() > 1)
+                            tb.Columns.Add(columnInfo[0], columnInfo[1]);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Please Select at least One Column.");
+                }
+
+
+                int result = 0;
+
+            string pk = string.Empty;
+
+            try
+            {
+                if (DoesTableExist(dimtabname) > 0)
+                    return -99;
+
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                Table.TableName = Table.TableName.Replace(' ', '_');
+
+                sb.AppendLine(("CREATE TABLE " + Table.TableName));
+
+                sb.AppendLine((" ( "));
+
+                foreach (var item in Table.PrimaryKeys)
+                {
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
+
+                    pk = pk + item.Key + ",";
+                }
+
+                foreach (var item in Table.Columns)
+                {
+                    sb.AppendLine(item.Key + " " + item.Value + ",");
+                }
+
+                pk = pk.TrimEnd(',');
+
+                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ") ");
+
+                sb.AppendLine((")"));
+
+                cmd.CommandText = sb.ToString();
+
+                result = cmd.ExecuteNonQuery();
+
+
 
                 Close();
             }
