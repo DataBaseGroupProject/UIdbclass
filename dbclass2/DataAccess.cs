@@ -823,6 +823,79 @@ namespace dbclass2
             return result;
         }
 
+        public static int LoadDataWarhouse(List<string> tables)
+        {
+            int result = 0;
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+
+                if (tables.Count > 0)
+                {
+                    FactTableInfo fact = new FactTableInfo();
+
+                    fact.PrimaryKeys = new Dictionary<string, string>();
+
+                    fact.Columns = new Dictionary<string, string>();
+
+                    fact.Relations = new Dictionary<string, string>();
+
+                    fact.TableName = "Auto_Generated_Fact_Table";
+
+                    foreach (var table in tables)
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        d.TableName = table + "_Dimensional";
+
+                        List<ColumnInfo> column = GetAllColumnsObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            sb.AppendLine("INSERT INTO " + d.TableName);
+
+                            sb.AppendLine("(");
+
+                            sb.AppendLine("SELECT ");
+
+                            foreach (var item in column)
+                            {
+                                sb.AppendLine(item.Name + ", ");
+                            }
+
+                            var index = sb.ToString().LastIndexOf(',');
+
+                            if (index >= 0)
+                                sb.Remove(index, 1);
+
+                            sb.AppendLine("FROM " + table);
+                        }
+
+                        sb.AppendLine(")");
+                    }
+
+                    cmd.CommandText = sb.ToString();
+
+                    result = cmd.ExecuteNonQuery();
+
+                    Close();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return result;
+        }
 
         public static void Close()
         {
