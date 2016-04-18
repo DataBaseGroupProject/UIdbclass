@@ -50,12 +50,12 @@ namespace dbclass2
             checkedListBox3.CheckOnClick = true;
             checkedListBox3.HorizontalScrollbar = true;            
 
-            InitializeMyControl();     
+            InitializeMyControl();
         }
 
         private void InitializeMyControl()
         {
-        }       
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -89,10 +89,19 @@ namespace dbclass2
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        public void LoadForm()
         {
-            List<string> list1 = new List<string>();
-            List<string> list2 = new List<string>();
+            this.Hide();
+            frm.Show();
+
+           frm.DisplayListBox();
+
+
+}
+ List<string> list1 = new List<string>();
+ List<string> list2 = new List<string>();
+private void button2_Click(object sender, EventArgs e)
+        {
             try
             {
                 DimensionalTableInfo tb = new DimensionalTableInfo();
@@ -225,9 +234,8 @@ namespace dbclass2
 
         private void button4_Click(object sender, EventArgs e)
         {
-
-            this.Hide();
-            frm.Show();
+            LoadForm();
+           
 
             try
             {
@@ -257,8 +265,7 @@ namespace dbclass2
                     if (iRet == -1)
                         MessageBox.Show("Data Warehouse Created Successfully.");
 
-                    this.Hide();
-                    frm.Show();
+                   // LoadForm();
                 }
                 else
                 {
@@ -266,8 +273,11 @@ namespace dbclass2
                     {
                         List<string> selectedTables = new List<string>();
 
-                        foreach (var item in checkedListBox1.SelectedItems)
-                            selectedTables.Add(item.ToString());
+                        foreach (var item in checkedListBox1.CheckedItems)
+                        {
+                            if (!selectedTables.Contains(item.ToString()))
+                                selectedTables.Add(item.ToString());
+                        }                     
 
                         int iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
@@ -275,12 +285,16 @@ namespace dbclass2
                         {
                             MessageBox.Show("Data Warehouse Created Successfully.");
 
-                            iRet = DataAccess.BuildDataWarhouse(selectedTables);
+                            iRet = DataAccess.LoadDataWarehouseDimensions(selectedTables);
+
+                            //iRet += DataAccess.LoadDataWarehouseDimensions(selectedTables);
 
                             if (iRet == -1)
                             {
                                 MessageBox.Show("Data Warehouse Data Loaded Successfully.");
                             }
+
+                           // LoadForm();
                         }
                         else
                         {
