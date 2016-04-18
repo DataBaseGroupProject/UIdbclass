@@ -390,14 +390,24 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length, cons.constraint_type
 
-                                  FROM all_tab_columns AllColumns
-                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
-                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
-                                  
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U') AND (AllColumns.nullable = 'N') 
-                                        And AllColumns.table_name = " + "'" + tabname + "'");
+                string query = (@"SELECT DISTINCT
+                                        ucc.table_name
+                                        , ucc.column_name
+                                        , uc.constraint_type
+                                        , AllColumns.nullable
+                                        , AllColumns.data_length
+                                        , AllColumns.data_type
+      
+                                    FROM user_cons_columns   ucc
+                                        ,user_constraints    uc
+                                        ,all_tab_columns AllColumns
+      
+                                    WHERE ucc.constraint_name = uc.constraint_name
+                                    AND ucc.table_name      = uc.table_name
+                                    AND AllColumns.column_name = ucc.column_name
+                                    AND (uc.constraint_type  = 'P'  OR uc.constraint_type = 'U' OR uc.constraint_type = 'R')
+                                    AND uc.table_name = " + "'" + tabname.ToUpper() + "'");
 
                 cmd.CommandText = query;
 
@@ -882,7 +892,7 @@ namespace dbclass2
 
                 Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
@@ -909,7 +919,50 @@ namespace dbclass2
                     fact.PrimaryKeys.Add("ID", "int");
 
                     foreach (var table in tables)
-                    {                     
+                    {
+                        DimensionalTableInfo d = new DimensionalTableInfo();
+
+                        d.TableName = table + "_Dimensional";
+
+                        List<ColumnInfo> column = GetPrimaryKeyObject(table);
+
+                        column.RemoveAll(i => i.ConstraintType != "P");
+
+                        if (column.Count > 0)
+                        {
+                            d.PrimaryKeys = new Dictionary<string, string>();
+
+                            foreach (var key in column)
+                            {
+                                if (!d.PrimaryKeys.ContainsKey(key.Name))
+                                    d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+
+                                if (!fact.Columns.ContainsKey(key.Name))
+                                    fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+
+                                if (!fact.Relations.ContainsKey(table))
+                                    fact.Relations.Add(table, key.Name);
+                            }
+                        }
+
+                        column = GetNonKeyObject(table);
+
+                        if (column.Count > 0)
+                        {
+                            d.Columns = new Dictionary<string, string>();
+
+                            foreach (var key in column)
+                            {
+                                if (!d.Columns.ContainsKey(key.Name))
+                                {
+                                    if (key.DataType.ToLower() == "date")
+                                        d.Columns.Add(key.Name, key.DataType);
+                                    else
+                                        d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
+                                }
+                            }
+                        }
+
                         result += ManualCreateDimenstionalTable(table);
                     }
 
@@ -919,7 +972,7 @@ namespace dbclass2
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;
