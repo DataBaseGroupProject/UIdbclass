@@ -244,8 +244,11 @@ namespace dbclass2
                     {
                         List<string> selectedTables = new List<string>();
 
-                        foreach (var item in checkedListBox1.SelectedItems)
-                            selectedTables.Add(item.ToString());
+                        foreach (var item in checkedListBox1.CheckedItems)
+                        {
+                            if (!selectedTables.Contains(item.ToString()))
+                                selectedTables.Add(item.ToString());
+                        }                     
 
                         int iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
