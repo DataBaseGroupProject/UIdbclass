@@ -71,7 +71,7 @@ namespace dbclass2
                 connect.TargetUserName = textBox6.Text.Trim();
                 connect.TargetPassword = textBox5.Text.Trim();
 
-                DataAccess.LoginConnect();
+                DataAccess.LoginConnect(connect);
 
                 List<string> results = DataAccess.GetTableName();
 
@@ -153,26 +153,9 @@ namespace dbclass2
 
                 FinalDimensionalTables.Add(tb);
 
-               // DataAccess.InsertDimensionalData(tb.TableName, list1, list2);
-
                 DataAccess.CreateDimenstionalTable(tb);
 
                 MessageBox.Show("Table " + tb.TableName + " Created Successfully.");                
-
-                /*for(int i = 0; i < listBox1.Items.Count; i++)
-                {
-                    list1.Add(li)
-                }*/
-
-                /*foreach (var item in listBox1.Items)
-                {
-                    list1.Add(item.ToString());
-                }
-                foreach (var item in listBox2.Items)
-                {
-                    list2.Add(item.ToString());
-                }*/
-               // DataAccess.InsertDimensionalData(tb.TableName,list1,list2);
 
                 ClearExistingTableInfoList();
                 ClearNewTableInfoList();
@@ -180,7 +163,6 @@ namespace dbclass2
             }
             catch (Exception ex)
             {
-                //Console.Out(ex.StackTrace);
                 MessageBox.Show("Failed to Create Table");
             }
         }

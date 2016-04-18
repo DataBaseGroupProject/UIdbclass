@@ -249,7 +249,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -291,7 +291,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -342,20 +342,30 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.data_length
+                string query = (@"  SELECT DISTINCT
+                                    ucc.table_name
+                                    ,ucc.column_name
+                                    , AllColumns.column_name
+                                    ,AllColumns.data_type
+                                    , AllColumns.data_length
+                                    ,AllColumns.nullable
+                                    ,uc.constraint_type
 
-                                  FROM all_tab_columns AllColumns
-                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
-                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
-                                  
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U' OR AllColumns.nullable = 'N') 
-                                        And AllColumns.table_name = " + "'" + tabname + "'");
+                                    FROM user_cons_columns   ucc
+                                    ,user_constraints    uc
+                                    ,all_tab_columns AllColumns
+
+                                    WHERE ucc.constraint_name = uc.constraint_name
+                                    AND ucc.table_name      = uc.table_name
+                                    AND ucc.column_name = AllColumns.column_name
+                                    AND (uc.constraint_type  = 'P' OR uc.constraint_type  = 'R' OR uc.constraint_type  = 'U')
+                                    AND uc.table_name = " + "'" + tabname.ToUpper() + "'");
 
                 cmd.CommandText = query;
 
@@ -384,20 +394,30 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length, cons.constraint_type
+                string query = (@"  SELECT DISTINCT
+                                    ucc.table_name
+                                    ,ucc.column_name
+                                    , AllColumns.column_name
+                                    ,AllColumns.data_type
+                                    , AllColumns.data_length
+                                    ,AllColumns.nullable
+                                    ,uc.constraint_type
 
-                                  FROM all_tab_columns AllColumns
-                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
-                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
-                                  
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U') AND (AllColumns.nullable = 'N') 
-                                        And AllColumns.table_name = " + "'" + tabname + "'");
+                                    FROM user_cons_columns   ucc
+                                    ,user_constraints    uc
+                                    ,all_tab_columns AllColumns
+
+                                    WHERE ucc.constraint_name = uc.constraint_name
+                                    AND ucc.table_name      = uc.table_name
+                                    AND ucc.column_name = AllColumns.column_name
+                                    AND (uc.constraint_type  = 'P' OR uc.constraint_type  = 'R' OR uc.constraint_type  = 'U')
+                                    AND uc.table_name = " + "'" + tabname.ToUpper() + "'");
 
                 cmd.CommandText = query;
 
@@ -438,13 +458,13 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName + "'";
+                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName.ToUpper() + "'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -478,7 +498,7 @@ namespace dbclass2
                 if (DoesTableExist(Table.TableName) > 0)
                     return -99;
 
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -527,27 +547,30 @@ namespace dbclass2
         {
             int result = 0;
 
-            //string pk = string.Empty;
             StringBuilder ren_manseltab = new StringBuilder();
             string incr = "";
 
             try
             {
-                /*if (DoesTableExist(manseltab) > 0)
-                    return -99;*/
-
-                Connect();
+               
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
+
                 incr = num.ToString();
-                ren_manseltab.AppendFormat("MAN");
-                ren_manseltab.AppendFormat(manseltab);
-                //ren_manseltab.Append('-');
-                ren_manseltab.AppendFormat(incr);
+
+                ren_manseltab.Append(manseltab);
+
+                ren_manseltab.Append("_Dim_Man_");
+
+                ren_manseltab.Append(incr);
+
+                if (DoesTableExist(manseltab) > 0)
+                    return -99;
 
                 sb.AppendLine(("CREATE TABLE " + ren_manseltab + " AS "));
 
@@ -560,6 +583,7 @@ namespace dbclass2
                 result = cmd.ExecuteNonQuery();
 
                 num++;
+
                 Close();
             }
             catch (Exception ex)
@@ -582,10 +606,10 @@ namespace dbclass2
             List<string> result1 = new List<string>();
             try
             {
-               // if (DoesTableExist(dimtable) > 0)
-                 //   return -99;
+               if (DoesTableExist(dimtable) > 0)
+                    return -99;
 
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -769,7 +793,7 @@ namespace dbclass2
                 if (DoesTableExist(Table.TableName) > 0)
                     return -99;
 
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -909,7 +933,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -956,7 +980,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -1026,7 +1050,7 @@ namespace dbclass2
 
                     Close();
 
-                    Connect();
+                    Connect("Source");
 
                     cmd = new OracleCommand();
 
@@ -1123,7 +1147,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -1157,7 +1181,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
