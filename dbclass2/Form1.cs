@@ -24,7 +24,7 @@ namespace dbclass2
     {
         public static List<DimensionalTableInfo> FinalDimensionalTables;
         public static List<FactTableInfo> FinalFactTables;
-        Form2 frm;
+        Form2 frm;        
 
         public Form1()
         {
@@ -48,7 +48,7 @@ namespace dbclass2
             checkedListBox2.HorizontalScrollbar = true;
 
             checkedListBox3.CheckOnClick = true;
-            checkedListBox3.HorizontalScrollbar = true;
+            checkedListBox3.HorizontalScrollbar = true;            
 
             InitializeMyControl();     
         }
@@ -91,20 +91,24 @@ namespace dbclass2
 
         private void button2_Click(object sender, EventArgs e)
         {
+            List<string> list1 = new List<string>();
+            List<string> list2 = new List<string>();
             try
             {
                 DimensionalTableInfo tb = new DimensionalTableInfo();
 
                 tb.TableName = textBox4.Text;
 
-                tb.PrimaryKeys = new Dictionary<string, string>();
+                tb.PrimaryKeys = new Dictionary<string, string>();                
 
-                if(listBox1.Items.Count > 0)
+                if (listBox1.Items.Count > 0)
                 {
                     foreach (var item in listBox1.Items)
                     {
-                        string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
-
+                       string s = item.ToString();
+                        list1.Add(s);
+                        //string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+                        string[] keyInfo = s.Split(new string[] { "<-->" }, StringSplitOptions.None);
                         if (keyInfo.Count() > 1)
                             tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
                     }
@@ -121,7 +125,10 @@ namespace dbclass2
                 {
                     foreach (var item in listBox2.Items)
                     {
-                        string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+                        string s = item.ToString();
+                        list2.Add(s);
+                        string[] columnInfo = s.Split(new string[] { "<-->" }, StringSplitOptions.None);
+                        //string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
 
                         if (columnInfo.Count() > 1)
                             tb.Columns.Add(columnInfo[0], columnInfo[1]);
@@ -134,11 +141,26 @@ namespace dbclass2
 
                 FinalDimensionalTables.Add(tb);
 
+               // DataAccess.InsertDimensionalData(tb.TableName, list1, list2);
+
                 DataAccess.CreateDimenstionalTable(tb);
 
-                MessageBox.Show("Table " + tb.TableName + " Created Successfully.");
+                MessageBox.Show("Table " + tb.TableName + " Created Successfully.");                
 
-                //DataAccess.InsertDimensionalTable(tb.TableName,listBox1,listBox2.Items);
+                /*for(int i = 0; i < listBox1.Items.Count; i++)
+                {
+                    list1.Add(li)
+                }*/
+
+                /*foreach (var item in listBox1.Items)
+                {
+                    list1.Add(item.ToString());
+                }
+                foreach (var item in listBox2.Items)
+                {
+                    list2.Add(item.ToString());
+                }*/
+               // DataAccess.InsertDimensionalData(tb.TableName,list1,list2);
 
                 ClearExistingTableInfoList();
                 ClearNewTableInfoList();
@@ -253,7 +275,7 @@ namespace dbclass2
                         {
                             MessageBox.Show("Data Warehouse Created Successfully.");
 
-                            iRet = DataAccess.LoadDataWarhouse(selectedTables);
+                            iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
                             if (iRet == -1)
                             {
@@ -286,6 +308,8 @@ namespace dbclass2
                     //if (checkedListBox1.GetSelected(i))// checkedListBox1.GetItemChecked(i))
                     {
                         string tab = (string)checkedListBox1.Items[i];
+                        DataAccess.ManualCreateDimenstionalTable(tab);
+                        MessageBox.Show("Table manually created in Datawarehouse");
                         results = DataAccess.GetPrimaryKey(tab);
                         results2 = DataAccess.GetNonKey(tab);
                     }
@@ -324,7 +348,10 @@ namespace dbclass2
                     {
                         if (!listBox1.Items.Contains(checkedListBox2.Items[i]))
                         {
-                            listBox1.Items.Add(checkedListBox2.Items[i]);
+                            listBox1.Items.Add(checkedListBox2.Items[i]).ToString();
+                            /*string s = "";
+                            s = listBox1.Items.Add(checkedListBox2.Items[i]).ToString();
+                            list1.Add(s);*/
                         }
                     }
                 }
@@ -346,7 +373,10 @@ namespace dbclass2
                     {
                         if (!listBox2.Items.Contains(checkedListBox3.Items[i]))
                         {
-                            listBox2.Items.Add(checkedListBox3.Items[i]);
+                            listBox2.Items.Add(checkedListBox3.Items[i]).ToString();
+                            /*string s = "";
+                            s = listBox2.Items.Add(checkedListBox3.Items[i]).ToString();
+                            list2.Add(s);*/
                         }
                     }
                 }
@@ -375,7 +405,7 @@ namespace dbclass2
 
                 MessageBox.Show("An error was encountered. Please try again later.");
             }
-        }
+        }        
     }
 }
 

@@ -21,6 +21,8 @@ namespace dbclass2
 
         public static string DevAccessInfo { get { return _DevAccessInfo; }}
 
+        public static int num = 0;
+
         public static void LoginConnect(AccessInfo Access = null)
         {
             try
@@ -335,7 +337,7 @@ namespace dbclass2
 
                 string query = (@"SELECT column_name, data_type, nullable, data_length
                                   FROM all_tab_cols
-                                  WHERE column_name Not In (SELECT cols.column_name
+                                  WHERE  column_name Not In (SELECT cols.column_name
                                                              FROM all_constraints cons, all_cons_columns cols
                                                              WHERE cons.constraint_type = 'P'
                                                                    AND cons.constraint_name = cols.constraint_name
@@ -463,53 +465,6 @@ namespace dbclass2
             return result;
         }
 
-        public static List<ColumnInfo> GetAllColumnsObject(string tabname)
-        {
-            List<ColumnInfo> result = new List<ColumnInfo>();
-
-            string selectedtable = tabname;
-
-            try
-            {
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
-
-                                  FROM all_tab_columns AllColumns
-                                                                    
-                                  WHERE AllColumns.table_name = " + "'" + tabname + "'");
-
-                cmd.CommandText = query;
-
-                OracleDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    ColumnInfo obj = new ColumnInfo();
-
-                    obj.Name = reader["column_name"].ToString();
-                    obj.DataType = reader["data_type"].ToString();
-                    obj.IsNull = reader["nullable"].ToString();
-                    obj.DataLength = reader["data_length"].ToString();
-                    obj.TransTable = tabname;
-
-                    result.Add(obj);
-                }
-
-                Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return result;
-        }
-
         /// <summary>
         /// Check if Table Exist in DB
         /// </summary>
@@ -553,115 +508,26 @@ namespace dbclass2
         public static int CreateDimenstionalTable(DimensionalTableInfo Table)
         {
             int result = 0;
+            //string result = "";
 
             string pk = string.Empty;
+
+            //Table = new DimensionalTableInfo();
+
+            //Table.TableName = "DOC";
+
+            //Table.PrimaryKeys = new Dictionary<string, string>();
+
+            //Table.PrimaryKeys.Add("PID", "Int");
+
+            //Table.Columns = new Dictionary<string, string>();
+
+            //Table.Columns.Add("Col1", "Int");
+            //Table.Columns.Add("Col2", "Varchar(50)");
 
             try
             {
                 if (DoesTableExist(Table.TableName) > 0)
-                    return -99;
-
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-
-                StringBuilder sb = new StringBuilder();
-
-                Table.TableName = Table.TableName.Replace(' ', '_');
-
-                sb.AppendLine(("CREATE TABLE " + Table.TableName));
-
-                sb.AppendLine(("( "));
-
-                foreach (var item in Table.PrimaryKeys)
-                {
-                    sb.AppendLine(item.Key + " " + item.Value + ",");
-
-                    pk = pk + item.Key + ",";
-                }
-
-                foreach (var item in Table.Columns)
-                {
-                    sb.AppendLine(item.Key + " " + item.Value + ",");
-                }
-
-                pk = pk.TrimEnd(',');
-
-                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ") ");
-
-                sb.AppendLine((")"));
-
-                cmd.CommandText = sb.ToString();
-
-                result = cmd.ExecuteNonQuery();
-
-
-
-                Close();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return result;
-        }
-
-//Insert Data into Dimensional Table
-
-        public static int InsertDimensionalTable(string dimtabname,List<string> list1, List<string> list2)
-        {
-            try
-            {
-                DimensionalTableInfo tb = new DimensionalTableInfo();
-
-                tb.TableName = textBox4.Text;
-
-                tb.PrimaryKeys = new Dictionary<string, string>();
-
-                if (listBox1.Items.Count > 0)
-                {
-                    foreach (var item in listBox1.Items)
-                    {
-                        string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
-
-                        if (keyInfo.Count() > 1)
-                            tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Please Select at least One Primary Key.");
-                }
-
-
-                tb.Columns = new Dictionary<string, string>();
-
-                if (listBox2.Items.Count > 0)
-                {
-                    foreach (var item in listBox2.Items)
-                    {
-                        string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
-
-                        if (columnInfo.Count() > 1)
-                            tb.Columns.Add(columnInfo[0], columnInfo[1]);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Please Select at least One Column.");
-                }
-
-
-                int result = 0;
-
-            string pk = string.Empty;
-
-            try
-            {
-                if (DoesTableExist(dimtabname) > 0)
                     return -99;
 
                 Connect();
@@ -700,8 +566,6 @@ namespace dbclass2
 
                 result = cmd.ExecuteNonQuery();
 
-
-
                 Close();
             }
             catch (Exception ex)
@@ -711,6 +575,237 @@ namespace dbclass2
 
             return result;
         }
+
+
+        public static int ManualCreateDimenstionalTable(string manseltab)
+        {
+            int result = 0;
+
+            //string pk = string.Empty;
+            StringBuilder ren_manseltab = new StringBuilder();
+            string incr = "";
+
+            try
+            {
+                /*if (DoesTableExist(manseltab) > 0)
+                    return -99;*/
+
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+                incr = num.ToString();
+                ren_manseltab.AppendFormat("MAN");
+                ren_manseltab.AppendFormat(manseltab);
+                //ren_manseltab.Append('-');
+                ren_manseltab.AppendFormat(incr);
+
+                sb.AppendLine(("CREATE TABLE " + ren_manseltab + " AS "));
+
+                sb.AppendLine((" ( "));
+
+                sb.AppendLine(("SELECT * FROM " + manseltab + ")"));
+
+                cmd.CommandText = sb.ToString();
+
+                result = cmd.ExecuteNonQuery();
+
+                num++;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Create and insert Dimensional Table 
+        /// </summary>
+        /// <param name="Table"></param>
+        /// <returns>Int Update Count</returns>
+        /*public static int InsertDimensionalData(string dimtable,List<string> pkslist,List<string> npkslist)
+        {
+            int result = 0;
+            List<string> result1 = new List<string>();
+            try
+            {
+               // if (DoesTableExist(dimtable) > 0)
+                 //   return -99;
+
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                StringBuilder sb = new StringBuilder();
+                StringBuilder selectcolssb = new StringBuilder();
+                StringBuilder selecttabssb = new StringBuilder();
+                List<string> selectpkcollists = new List<string>();
+                List<string> selectnpkcollists = new List<string>();
+                List<string> seltables = new List<string>();
+
+                foreach (var item in pkslist)
+                {
+                    string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+
+                    selectcolssb.AppendFormat(keyInfo[2]);
+                    selectcolssb.Append('.');
+                    selectcolssb.AppendFormat(keyInfo[0]);
+
+                    selectpkcollists.Add(selectcolssb.ToString());
+
+                    if (!(seltables.Contains(keyInfo[2])))
+                        seltables.Add(keyInfo[2]);
+                }
+
+                foreach (var item in npkslist)
+                {
+                    string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+
+                    selectcolssb.AppendFormat(keyInfo[2]);
+                    selectcolssb.Append('.');
+                    selectcolssb.AppendFormat(keyInfo[0]);
+
+                    selectnpkcollists.Add(selectcolssb.ToString());
+
+                    if (!(seltables.Contains(keyInfo[2])))
+                        seltables.Add(keyInfo[2]);
+                }
+
+                StringBuilder selpkcols = new StringBuilder();
+                StringBuilder selnpkcols = new StringBuilder();
+                int count;
+                count = selectpkcollists.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    if(selectnpkcollists.Count != 0)
+                    {
+                        selpkcols.AppendFormat(selectpkcollists[i]);
+                        selpkcols.Append(',');
+                    }
+                    else
+                    {
+                        selpkcols.AppendFormat(selectpkcollists[i]);
+                    }                        
+                }
+
+                count = selectpkcollists.Count + selectnpkcollists.Count;
+                //count = selectnpkcollists.Count;
+                for (int i = selectnpkcollists.Count ; i < count; i++)
+                {
+                    if (i < (count))
+                    {
+                        if(i != count-1)
+                        {
+                            selnpkcols.AppendFormat(selectnpkcollists[i]);
+                            selnpkcols.Append(',');
+                        }
+                        else
+                        {
+                            selnpkcols.AppendFormat(selectnpkcollists[i]);
+                        }
+                    }                    
+                }
+
+                int tabcnt = seltables.Count;
+                string s = "";
+                for (int i = 0; i < tabcnt; i++)
+                {
+                    if (i != (count - 1))
+                    {
+                        s = seltables[i];
+                        selecttabssb.AppendFormat(seltables[i]);
+                        selecttabssb.Append(' ');
+                        selecttabssb.Append(s[0]);
+                        selecttabssb.Append(',');
+                    }
+                    else
+                    {
+                        s = seltables[i];
+                        selecttabssb.AppendFormat(seltables[i]);
+                        selecttabssb.Append(' ');
+                        selecttabssb.Append(s[0]);
+                    }
+                }
+                string t1 = "";
+                string t2 = "";
+                StringBuilder joincond = new StringBuilder();
+
+                if (tabcnt == 1)
+                {
+                    //sb.AppendLine("SELECT " + selpkcols.ToString() + selnpkcols.ToString());
+                    sb.AppendLine("SELECT " + selpkcols.ToString());
+
+                    sb.AppendLine(" FROM " + selecttabssb);
+                }
+                else
+                {
+                    for (int i = 0; i < tabcnt; i++)
+                    {
+                        if (i + 1 < tabcnt)
+                        {
+                            if (i + 1 == 1)
+                            {
+                                t1 = seltables[i];
+                                t2 = seltables[i + 1];
+                                joincond.Append(t1[0]);
+                                joincond.AppendFormat(".P_PID = ");
+                                joincond.Append(t2[0]);
+                                joincond.AppendFormat(".P_PID");
+                            }
+                            else
+                            {
+                                joincond.AppendFormat(" AND ");
+                                t1 = seltables[i];
+                                t2 = seltables[i + 1];
+                                joincond.Append(t1[0]);
+                                joincond.AppendFormat(".P_PID = ");
+                                joincond.Append(t2[0]);
+                                joincond.AppendFormat(".P_PID");
+                            }
+
+                        }
+                    }
+                    //sb.AppendLine("SELECT " + selpkcols.ToString() + selnpkcols.ToString());
+                    sb.AppendLine("SELECT " + selpkcols.ToString());
+                    sb.AppendLine(" FROM " + selecttabssb);
+
+                    sb.AppendLine(" WHERE (" + joincond.ToString() + ")");
+                }
+
+                cmd.CommandText = sb.ToString();
+
+                // OracleDataReader reader = cmd.ExecuteReader();
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        result1.Add(reader.GetName(i).ToString());
+                    }
+                    //result1.Add(reader["table_name"].ToString());
+                }
+
+                Close();
+            }
+
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }*/
+
 
         /// <summary>
         /// Create Fact Table 
@@ -761,7 +856,7 @@ namespace dbclass2
 
                 sb.AppendLine(("CREATE TABLE " + Table.TableName));
 
-                sb.AppendLine(("( "));
+                sb.AppendLine((" ( "));
 
                 foreach (var item in Table.PrimaryKeys)
                 {
@@ -808,8 +903,6 @@ namespace dbclass2
             {
                 if(tables.Count > 0)
                 {
-                    StringBuilder sb = new StringBuilder();
-
                     FactTableInfo fact = new FactTableInfo();
 
                     fact.PrimaryKeys = new Dictionary<string, string>();
@@ -827,6 +920,8 @@ namespace dbclass2
                         d.TableName = table + "_Dimensional";
 
                         List<ColumnInfo> column = GetPrimaryKeyObject(table);
+
+                        column.RemoveAll(i => i.ConstraintType != "P");
 
                         if(column.Count > 0)
                         {
@@ -876,85 +971,12 @@ namespace dbclass2
             return result;
         }
 
-        public static int LoadDataWarhouse(List<string> tables)
-        {
-            int result = 0;
-
-            try
-            {
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-
-                StringBuilder sb = new StringBuilder();
-
-                if (tables.Count > 0)
-                {
-                    FactTableInfo fact = new FactTableInfo();
-
-                    fact.PrimaryKeys = new Dictionary<string, string>();
-
-                    fact.Columns = new Dictionary<string, string>();
-
-                    fact.Relations = new Dictionary<string, string>();
-
-                    fact.TableName = "Auto_Generated_Fact_Table";
-
-                    foreach (var table in tables)
-                    {
-                        DimensionalTableInfo d = new DimensionalTableInfo();
-
-                        d.TableName = table + "_Dimensional";
-
-                        List<ColumnInfo> column = GetAllColumnsObject(table);
-
-                        if (column.Count > 0)
-                        {
-                            sb.AppendLine("INSERT INTO " + d.TableName);
-
-                            sb.AppendLine("(");
-
-                            sb.AppendLine("SELECT ");
-
-                            foreach (var item in column)
-                            {
-                                sb.AppendLine(item.Name + ", ");
-                            }
-
-                            var index = sb.ToString().LastIndexOf(',');
-
-                            if (index >= 0)
-                                sb.Remove(index, 1);
-
-                            sb.AppendLine("FROM " + table);
-                        }
-
-                        sb.AppendLine(")");
-                    }
-
-                    cmd.CommandText = sb.ToString();
-
-                    result = cmd.ExecuteNonQuery();
-
-                    Close();
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-
-            return result;
-        }
-
         /// <summary>
         ///  Load Data for Dimension Table
         /// </summary>
         /// <param name="Table"></param>
         /// <returns>Int Update Count</returns>
+
         public static int LoadDimensionTableData(FactTableInfo Table)
         {
             int result = 0;
@@ -999,3 +1021,4 @@ namespace dbclass2
         }
     }
 }
+
