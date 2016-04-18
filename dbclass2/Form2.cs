@@ -186,19 +186,19 @@ namespace dbclass2
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            OracleConnection conn = new OracleConnection("Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;");
-            OracleCommand cmd = new OracleCommand("SELECT * FROM TESTCONNECTION1", conn);
-            conn.Open();
-            cmd.CommandType = CommandType.Text;
-            DataSet ds = new DataSet();
-            OracleDataAdapter da = new OracleDataAdapter();
-            da.InsertCommand = cmd;
-            da.Fill(ds);
-            dataGridView1.DataSource = ds.Tables[0];
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    OracleConnection conn = new OracleConnection("Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;");
+        //    OracleCommand cmd = new OracleCommand("SELECT * FROM TESTCONNECTION1", conn);
+        //    conn.Open();
+        //    cmd.CommandType = CommandType.Text;
+        //    DataSet ds = new DataSet();
+        //    OracleDataAdapter da = new OracleDataAdapter();
+        //    da.InsertCommand = cmd;
+        //    da.Fill(ds);
+        //    dataGridView1.DataSource = ds.Tables[0];
 
-        }
+        //}
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
