@@ -129,7 +129,7 @@ namespace dbclass2
                     listBox2.Items.Add(item);
                 }
 
-                MessageBox.Show("You are connected!");
+               // MessageBox.Show("You are connected!");
             }
             catch (Exception)
             {
