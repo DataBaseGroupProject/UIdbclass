@@ -115,7 +115,6 @@ namespace dbclass2
                     {
                        string s = item.ToString();
                         list1.Add(s);
-                        //string[] keyInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
                         string[] keyInfo = s.Split(new string[] { "<-->" }, StringSplitOptions.None);
                         if (keyInfo.Count() > 1)
                             tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
@@ -136,7 +135,9 @@ namespace dbclass2
                         string s = item.ToString();
                         list2.Add(s);
                         string[] columnInfo = s.Split(new string[] { "<-->" }, StringSplitOptions.None);
-                        //string[] columnInfo = item.ToString().Split(new string[] { "<-->" }, StringSplitOptions.None);
+
+                        if (columnInfo[1].ToString().ToLower().Contains("date"))
+                            columnInfo[1] = "DATE";
 
                         if (columnInfo.Count() > 1)
                             tb.Columns.Add(columnInfo[0], columnInfo[1]);

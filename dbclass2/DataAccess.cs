@@ -121,23 +121,23 @@ namespace dbclass2
         }
 
         //will function as an alternative connection string for esmart2 but currently is setup for esmart1
-        //public static void Connect2()
-        //{
-        //    try
-        //    {
-        //        //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-        //        string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
+        public static void Connect2()
+        {
+            try
+            {
+                //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
+                string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
 
-        //        con = new OracleConnection(oradb);  // C#
+                con = new OracleConnection(oradb);  // C#
 
-        //        con.Open();
-        //    }
-        //    catch (Exception)
-        //    {
+                con.Open();
+            }
+            catch (Exception)
+            {
 
-        //        throw;
-        //    }
-        //}
+                throw;
+            }
+        }
 
         //public static void Connect2()
         //{
@@ -185,13 +185,13 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect2();
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'FACT%'";
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name NOT LIKE '%FACT%'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -216,13 +216,13 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect2();
 
                 OracleCommand cmd = new OracleCommand();
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name LIKE 'FACT%'";
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name LIKE '%_FACT%'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -470,22 +470,8 @@ namespace dbclass2
         public static int CreateDimenstionalTable(DimensionalTableInfo Table)
         {
             int result = 0;
-            //string result = "";
 
             string pk = string.Empty;
-
-            //Table = new DimensionalTableInfo();
-
-            //Table.TableName = "DOC";
-
-            //Table.PrimaryKeys = new Dictionary<string, string>();
-
-            //Table.PrimaryKeys.Add("PID", "Int");
-
-            //Table.Columns = new Dictionary<string, string>();
-
-            //Table.Columns.Add("Col1", "Int");
-            //Table.Columns.Add("Col2", "Varchar(50)");
 
             try
             {
