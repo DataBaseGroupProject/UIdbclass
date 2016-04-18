@@ -11,6 +11,7 @@ namespace dbclass2
     class DataAccess
     {
         public static OracleConnection con;
+        public static OracleConnection con2;
 
         public object CommandType { get; private set; }
 
@@ -136,6 +137,15 @@ namespace dbclass2
         //    }
         //}
 
+        //public static void Connect2()
+        //{
+        //     string oradb2 = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3; ";
+        //    //string oradb2 = "Data Source=//localhost:1521/xe;User Id=system;Password=xoxoxo83;";
+        //    con2 = new OracleConnection(oradb2);
+        //    con2.Open();
+        //}
+
+
         public static List<string> GetTableName()
         {
             List<string> result = new List<string>();
@@ -173,7 +183,7 @@ namespace dbclass2
 
             try
             {
-                Connect("Destination");
+                Connect();
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -204,7 +214,7 @@ namespace dbclass2
 
             try
             {
-                Connect("Destination");
+                Connect();
 
                 OracleCommand cmd = new OracleCommand();
 

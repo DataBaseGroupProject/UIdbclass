@@ -41,19 +41,10 @@ namespace dbclass2
         //This method will connect to the esmart2 database and will display the tables from esmart2 in a listbox as a facttable listbox and a dimension table listbox
         private void button1_Click(object sender, EventArgs e)
         {
-
-
             try
             {
-                AccessInfo connect = new AccessInfo();
 
-                connect.TargetUrl = textBox1.Text.Trim();
-                connect.TargetUserName = textBox2.Text.Trim();
-                connect.TargetPassword = textBox3.Text.Trim();
-
-
-                DataAccess.LoginConnect();
-
+                DataAccess.Connect();
                 List<string> res = DataAccess.GetFactTable();
 
                 foreach (var itm in res)
@@ -78,41 +69,106 @@ namespace dbclass2
             }
 
 
+            //try
+            //{
+            //    AccessInfo connect = new AccessInfo();
+
+            //    connect.TargetUrl = textBox1.Text.Trim();
+            //    connect.TargetUserName = textBox2.Text.Trim();
+            //    connect.TargetPassword = textBox3.Text.Trim();
+
+
+            //    DataAccess.LoginConnect();
+
+            //    List<string> res = DataAccess.GetFactTable();
+
+            //    foreach (var itm in res)
+            //    {
+            //        listBox1.Items.Add(itm);
+            //    }
+
+
+
+            //    List<string> dim = DataAccess.GetDimTable();
+            //    foreach (var element in dim)
+            //    {
+            //        listBox2.Items.Add(element);
+            //    }
+
+            //    MessageBox.Show("You are connected!");
+            //}
+            //catch (Exception)
+            //{
+            //    MessageBox.Show("Invalid User Name/Password");
+
+            //}
+
+
+
+        }
+
+
+        public void DisplayListBox()
+        {
+            try
+            {
+
+                DataAccess.Connect();
+                List<string> res = DataAccess.GetFactTable();
+
+                foreach (var itm in res)
+                {
+                    listBox1.Items.Add(itm);
+                }
+
+
+
+                List<string> dim = DataAccess.GetDimTable();
+                foreach (var element in dim)
+                {
+                    listBox2.Items.Add(element);
+                }
+
+                MessageBox.Show("You are connected!");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Invalid User Name/Password");
+
+            }
+
 
         }
 
 
 
 
+        //try
+        //{
+        //    //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
+        //   // DataAccess.Connect();
+
+        //    //List<string> results = DataAccess.GetTableName();
+
+        //    //foreach (var item in results)
+        //    {
+        //         listBox1.Items.Add(item);
+        //    }
+
+        //    MessageBox.Show("You are connected!");
+        //}
+        //catch (Exception)
+        //{
+        //    MessageBox.Show("Invalid User Name/Password");
+
+        //}
 
 
 
-                //try
-                //{
-                //    //DataAccess.Connect(textBox1.Text, textBox2.Text, textBox3.Text);
-                //   // DataAccess.Connect();
-
-                //    //List<string> results = DataAccess.GetTableName();
-
-                //    //foreach (var item in results)
-                //    {
-                //         listBox1.Items.Add(item);
-                //    }
-
-                //    MessageBox.Show("You are connected!");
-                //}
-                //catch (Exception)
-                //{
-                //    MessageBox.Show("Invalid User Name/Password");
-
-                //}
 
 
 
 
-            
-         
-    
 
 
         private void textBox3_TextChanged(object sender, EventArgs e)
