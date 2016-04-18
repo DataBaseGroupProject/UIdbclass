@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OracleClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,6 @@ namespace dbclass2
 {
     public partial class Form2 : Form
     {
-        OracleConnection con;
-
         public static void CreateOracleConnection()
         {
         }
@@ -113,23 +112,23 @@ namespace dbclass2
             try
             {
 
-                DataAccess.Connect();
+                DataAccess.Connect2();
                 List<string> res = DataAccess.GetFactTable();
 
-                foreach (var itm in res)
+                foreach (var item in res)
                 {
-                    listBox1.Items.Add(itm);
+                    listBox1.Items.Add(item);
                 }
 
 
 
                 List<string> dim = DataAccess.GetDimTable();
-                foreach (var element in dim)
+                foreach (var item in dim)
                 {
-                    listBox2.Items.Add(element);
+                    listBox2.Items.Add(item);
                 }
 
-                MessageBox.Show("You are connected!");
+               // MessageBox.Show("You are connected!");
             }
             catch (Exception)
             {
@@ -186,28 +185,19 @@ namespace dbclass2
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    OracleConnection conn = new OracleConnection("Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;");
+        //    OracleCommand cmd = new OracleCommand("SELECT * FROM TESTCONNECTION1", conn);
+        //    conn.Open();
+        //    cmd.CommandType = CommandType.Text;
+        //    DataSet ds = new DataSet();
+        //    OracleDataAdapter da = new OracleDataAdapter();
+        //    da.InsertCommand = cmd;
+        //    da.Fill(ds);
+        //    dataGridView1.DataSource = ds.Tables[0];
 
-                       con = new OracleConnection(oradb);  // C#
-
-                    con.Open();
-
-
-
-
-
-                  OracleCommand cmd = new OracleCommand("select * from patient", con);
-
-                     
-                    DataSet ds = new DataSet();
-            OracleDataAdapter da = new OracleDataAdapter(cmd);
-                     da.Fill(ds);
-            dataGridView1.DataSource = ds.Tables[0]; 
-            
-
-        }
+        //}
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
