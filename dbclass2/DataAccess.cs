@@ -642,7 +642,7 @@ namespace dbclass2
         /// </summary>
         /// <param name="Table"></param>
         /// <returns>Int Update Count</returns>
-        /*public static int InsertDimensionalData(string dimtable,List<string> pkslist,List<string> npkslist)
+        public static int InsertDimensionalData(string dimtable,List<string> pkslist,List<string> npkslist)
         {
             int result = 0;
             List<string> result1 = new List<string>();
@@ -816,7 +816,7 @@ namespace dbclass2
             }
 
             return result;
-        }*/
+        }
 
 
         /// <summary>
