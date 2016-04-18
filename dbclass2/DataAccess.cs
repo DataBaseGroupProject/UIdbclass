@@ -17,11 +17,11 @@ namespace dbclass2
 
         public static AccessInfo ConnectionInfo { get; set; }
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
         //public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=karthika86;";
-=======
+//=======
         //public static string _DevAccessInfo = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
->>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
+//>>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
         public static string _DevAccessInfo = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3;";
 
         public static string DevAccessInfo { get { return _DevAccessInfo; }}
@@ -563,18 +563,18 @@ namespace dbclass2
 
                 result = cmd.ExecuteNonQuery();
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
 
-=======
->>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
+//=======
+//>>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
                 Close();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
             return result;
         }
@@ -678,8 +678,8 @@ namespace dbclass2
         //    {
         //        throw ex;
         //    }
-=======
->>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
+//=======
+//>>>>>>> 4ded801f9fccefc1bde54492fdd066054409838f
 
         //    return result;
         //}
