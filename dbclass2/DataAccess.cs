@@ -56,10 +56,10 @@ namespace dbclass2
 
                 ConnectionInfo = Access;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -118,41 +118,13 @@ namespace dbclass2
             }
         }
 
-        //will function as an alternative connection string for esmart2 but currently is setup for esmart1
-        //public static void Connect2()
-        //{
-        //    try
-        //    {
-        //        //string oradb = "Data Source=//localhost:1521/xe;User Id=system;Password=admin;";
-        //        string oradb = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart2;Password=esmart2A3;";
-
-        //        con = new OracleConnection(oradb);  // C#
-
-        //        con.Open();
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
-
-        //public static void Connect2()
-        //{
-        //     string oradb2 = "Data Source=//taurus.ccec.unf.edu:1521/gporcl;User Id=esmart1;Password=esmart1A3; ";
-        //    //string oradb2 = "Data Source=//localhost:1521/xe;User Id=system;Password=xoxoxo83;";
-        //    con2 = new OracleConnection(oradb2);
-        //    con2.Open();
-        //}
-
-
         public static List<string> GetTableName()
         {
             List<string> result = new List<string>();
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -183,7 +155,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -214,7 +186,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -247,7 +219,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -289,7 +261,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -340,7 +312,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -374,7 +346,7 @@ namespace dbclass2
             return result;
         }
 
-        public static List<ColumnInfo> GetPrimaryKeyObject(string tabname)
+        public static List<ColumnInfo> GetPrimaryKeyObject(string tabname, string target)
         {
             List<ColumnInfo> result = new List<ColumnInfo>();
 
@@ -382,7 +354,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect(target);
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -425,7 +397,7 @@ namespace dbclass2
             return result;
         }
 
-        public static List<ColumnInfo> GetAllColumnsObject(string tabname)
+        public static List<ColumnInfo> GetAllColumnsObject(string tabname, string target)
         {
             List<ColumnInfo> result = new List<ColumnInfo>();
 
@@ -433,7 +405,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect(target);
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -477,13 +449,13 @@ namespace dbclass2
         /// </summary>
         /// <param name="tableName"></param>
         /// <returns>int</returns>
-        public static int DoesTableExist(string tableName)
+        public static int DoesTableExist(string tableName, string target)
         {
             List<string> result = new List<string>();
 
             try
             {
-                Connect();
+                Connect(target);
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -520,10 +492,10 @@ namespace dbclass2
 
             try
             {
-                if (DoesTableExist(Table.TableName) > 0)
+                if (DoesTableExist(Table.TableName, "Soruce") > 0)
                     return -99;
 
-                Connect();
+                Connect("Soruce");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -582,10 +554,10 @@ namespace dbclass2
 
             try
             {
-                if (DoesTableExist(Table.TableName) > 0)
+                if (DoesTableExist(Table.TableName, "Source") > 0)
                     return -99;
 
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -662,7 +634,7 @@ namespace dbclass2
 
                         d.TableName = table + "_Dimensional";
 
-                        List<ColumnInfo> column = GetPrimaryKeyObject(table);
+                        List<ColumnInfo> column = GetPrimaryKeyObject(table, "Destination");
 
                         column.RemoveAll(i => i.ConstraintType != "P");
 
@@ -727,7 +699,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -751,7 +723,7 @@ namespace dbclass2
 
                         d.TableName = table + "_Dimensional";
 
-                        List<ColumnInfo> column = GetAllColumnsObject(table);
+                        List<ColumnInfo> column = GetAllColumnsObject(table, "Destination");
 
                         if (column.Count > 0)
                         {
@@ -797,7 +769,7 @@ namespace dbclass2
 
                     Close();
 
-                    Connect();
+                    Connect("Destination");
 
                     cmd = new OracleCommand();
 
@@ -813,7 +785,7 @@ namespace dbclass2
 
                         sb.AppendLine("INSERT INTO " + fact.TableName);
 
-                        List<ColumnInfo> column = GetAllColumnsObject("AUTO_GENERATED_FACT_TABLE");
+                        List<ColumnInfo> column = GetAllColumnsObject("AUTO_GENERATED_FACT_TABLE", "Destination");
 
                         if (column.Count > 0)
                         {
@@ -834,7 +806,7 @@ namespace dbclass2
 
                         sb.AppendLine("(");
 
-                        column = GetPrimaryKeyObject(table);
+                        column = GetPrimaryKeyObject(table, "Destination");
 
                         if (column.Count > 0)
                         {
@@ -927,7 +899,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Destination");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -953,7 +925,7 @@ namespace dbclass2
 
                         d.TableName = table + "_Dimensional";
 
-                        List<ColumnInfo> column = GetAllColumnsObject(table);
+                        List<ColumnInfo> column = GetAllColumnsObject(table, "Destination");
 
                         if (column.Count > 0)
                         {

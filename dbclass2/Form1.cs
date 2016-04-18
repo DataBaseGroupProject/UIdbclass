@@ -71,7 +71,7 @@ namespace dbclass2
                 connect.TargetUserName = textBox6.Text.Trim();
                 connect.TargetPassword = textBox5.Text.Trim();
 
-                DataAccess.LoginConnect();
+                DataAccess.LoginConnect(connect);
 
                 List<string> results = DataAccess.GetTableName();
 
