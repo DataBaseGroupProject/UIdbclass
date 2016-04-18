@@ -390,14 +390,24 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length, cons.constraint_type
 
-                                  FROM all_tab_columns AllColumns
-                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
-                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
-                                  
-                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U') AND (AllColumns.nullable = 'N') 
-                                        And AllColumns.table_name = " + "'" + tabname + "'");
+                string query = (@"SELECT DISTINCT
+                                        ucc.table_name
+                                        , ucc.column_name
+                                        , uc.constraint_type
+                                        , AllColumns.nullable
+                                        , AllColumns.data_length
+                                        , AllColumns.data_type
+      
+                                    FROM user_cons_columns   ucc
+                                        ,user_constraints    uc
+                                        ,all_tab_columns AllColumns
+      
+                                    WHERE ucc.constraint_name = uc.constraint_name
+                                    AND ucc.table_name      = uc.table_name
+                                    AND AllColumns.column_name = ucc.column_name
+                                    AND (uc.constraint_type  = 'P'  OR uc.constraint_type = 'U' OR uc.constraint_type = 'R')
+                                    AND uc.table_name = " + "'" + tabname.ToUpper() + "'");
 
                 cmd.CommandText = query;
 
@@ -491,7 +501,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName + "'";
+                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName.ToUpper() + "'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -590,14 +600,12 @@ namespace dbclass2
         {
             int result = 0;
 
-            //string pk = string.Empty;
             StringBuilder ren_manseltab = new StringBuilder();
+
             string incr = "";
 
             try
             {
-                /*if (DoesTableExist(manseltab) > 0)
-                    return -99;*/
 
                 Connect();
 
@@ -606,23 +614,32 @@ namespace dbclass2
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
+
                 incr = num.ToString();
-                ren_manseltab.AppendFormat("MAN");
-                ren_manseltab.AppendFormat(manseltab);
-                //ren_manseltab.Append('-');
-                ren_manseltab.AppendFormat(incr);
+
+                ren_manseltab.Append(manseltab);
+
+                ren_manseltab.Append("_Man_Dim_");
+
+                ren_manseltab.Append(incr);
+
+                if (DoesTableExist(ren_manseltab.ToString()) > 0)
+                    return -99;
 
                 sb.AppendLine(("CREATE TABLE " + ren_manseltab + " AS "));
 
-                sb.AppendLine((" ( "));
+                sb.AppendLine(("("));
 
-                sb.AppendLine(("SELECT * FROM " + manseltab + ")"));
+                sb.AppendLine(("SELECT * FROM " + manseltab));
+
+                sb.AppendLine((")"));
 
                 cmd.CommandText = sb.ToString();
 
                 result = cmd.ExecuteNonQuery();
 
                 num++;
+
                 Close();
             }
             catch (Exception ex)
@@ -875,7 +892,7 @@ namespace dbclass2
 
                 Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
@@ -915,9 +932,9 @@ namespace dbclass2
                         {
                             d.PrimaryKeys = new Dictionary<string, string>();
 
-                            foreach(var key in column)
+                            foreach (var key in column)
                             {
-                                if(!d.PrimaryKeys.ContainsKey(key.Name))
+                                if (!d.PrimaryKeys.ContainsKey(key.Name))
                                     d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
 
                                 if (!fact.Columns.ContainsKey(key.Name))
@@ -936,9 +953,9 @@ namespace dbclass2
 
                             foreach (var key in column)
                             {
-                                if(!d.Columns.ContainsKey(key.Name))
+                                if (!d.Columns.ContainsKey(key.Name))
                                 {
-                                    if(key.DataType.ToLower() == "date")
+                                    if (key.DataType.ToLower() == "date")
                                         d.Columns.Add(key.Name, key.DataType);
                                     else
                                         d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
@@ -946,16 +963,16 @@ namespace dbclass2
                             }
                         }
 
-                        result += CreateDimenstionalTable(d);
+                        result += ManualCreateDimenstionalTable(table);
                     }
 
-                    if(result == -1)
+                    if (result != -99)
                     {
                         result = CreateFactTable(fact);
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;
