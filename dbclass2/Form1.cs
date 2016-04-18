@@ -95,12 +95,11 @@ namespace dbclass2
             frm.Show();
 
            frm.DisplayListBox();
+        }
 
-
-}
- List<string> list1 = new List<string>();
- List<string> list2 = new List<string>();
-private void button2_Click(object sender, EventArgs e)
+        List<string> list1 = new List<string>();
+        List<string> list2 = new List<string>();
+         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
@@ -235,8 +234,6 @@ private void button2_Click(object sender, EventArgs e)
         private void button4_Click(object sender, EventArgs e)
         {
             LoadForm();
-           
-
             try
             {
                 if (FinalDimensionalTables.Count > 1)
@@ -264,8 +261,6 @@ private void button2_Click(object sender, EventArgs e)
 
                     if (iRet == -1)
                         MessageBox.Show("Data Warehouse Created Successfully.");
-
-                   // LoadForm();
                 }
                 else
                 {
@@ -276,8 +271,10 @@ private void button2_Click(object sender, EventArgs e)
                         foreach (var item in checkedListBox1.CheckedItems)
                         {
                             if (!selectedTables.Contains(item.ToString()))
+                            {
                                 selectedTables.Add(item.ToString());
-                        }                     
+                            }
+                        }
 
                         int iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
@@ -319,16 +316,13 @@ private void button2_Click(object sender, EventArgs e)
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
                     if (checkedListBox1.GetSelected(i) || checkedListBox1.GetItemChecked(i))
-                    //if (checkedListBox1.GetSelected(i))// checkedListBox1.GetItemChecked(i))
                     {
                         string tab = (string)checkedListBox1.Items[i];
-                        DataAccess.ManualCreateDimenstionalTable(tab);
-                        MessageBox.Show("Table manually created in Datawarehouse");
                         results = DataAccess.GetPrimaryKey(tab);
                         results2 = DataAccess.GetNonKey(tab);
                     }
                 }
-  
+
                 foreach (string cols in results)
                 {
                     if (!checkedListBox2.Items.Contains(cols))
