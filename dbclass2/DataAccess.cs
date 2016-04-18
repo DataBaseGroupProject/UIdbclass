@@ -917,6 +917,53 @@ namespace dbclass2
             return result;
         }
 
+        public static List<ColumnInfo> GetAllColumnsObject(string tabname)
+        {
+            List<ColumnInfo> result = new List<ColumnInfo>();
+
+            string selectedtable = tabname;
+
+            try
+            {
+                Connect();
+
+                OracleCommand cmd = new OracleCommand();
+
+                cmd.Connection = con;
+
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
+
+                                  FROM all_tab_columns AllColumns
+                                                                    
+                                  WHERE AllColumns.table_name = " + "'" + tabname + "'");
+
+                cmd.CommandText = query;
+
+                OracleDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ColumnInfo obj = new ColumnInfo();
+
+                    obj.Name = reader["column_name"].ToString();
+                    obj.DataType = reader["data_type"].ToString();
+                    obj.IsNull = reader["nullable"].ToString();
+                    obj.DataLength = reader["data_length"].ToString();
+                    obj.TransTable = tabname;
+
+                    result.Add(obj);
+                }
+
+                Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return result;
+        }
+
         public static int LoadDataWarehouseDimensions(List<string> tables)
         {
             int result = 0;
