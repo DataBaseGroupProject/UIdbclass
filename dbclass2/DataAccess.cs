@@ -667,12 +667,12 @@ namespace dbclass2
                     {
                         if(i != count-1)
                         {
-                            selnpkcols.AppendFormat(selectnpkcollists[i]);
-                            selnpkcols.Append(',');
+                            selpkcols.AppendFormat(selectnpkcollists[i]);
+                            selpkcols.Append(',');
                         }
                         else
                         {
-                            selnpkcols.AppendFormat(selectnpkcollists[i]);
+                            selpkcols.AppendFormat(selectnpkcollists[i]);
                         }
                     }                    
                 }
