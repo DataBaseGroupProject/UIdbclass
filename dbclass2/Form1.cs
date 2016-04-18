@@ -117,7 +117,10 @@ namespace dbclass2
                         list1.Add(s);
                         string[] keyInfo = s.Split(new string[] { "<-->" }, StringSplitOptions.None);
                         if (keyInfo.Count() > 1)
+                        {
                             tb.PrimaryKeys.Add(keyInfo[0], keyInfo[1]);
+                            tb.OldTableName = keyInfo[2];
+                        }
                     }
                 }
                 else

@@ -488,27 +488,25 @@ namespace dbclass2
 
                 Table.TableName = Table.TableName.Replace(' ', '_');
 
-                sb.AppendLine(("CREATE TABLE " + Table.TableName));
-
-                sb.AppendLine((" ( "));
+                sb.AppendLine(("CREATE TABLE " + Table.TableName + " " + "AS (SELECT" + " "));
 
                 foreach (var item in Table.PrimaryKeys)
                 {
-                    sb.AppendLine(item.Key + " " + item.Value + ",");
-
-                    pk = pk + item.Key + ",";
+                    sb.AppendLine(item.Key);
                 }
 
                 foreach (var item in Table.Columns)
                 {
-                    sb.AppendLine(item.Key + " " + item.Value + ",");
+                    sb.AppendLine("," + item.Key);
+
+                    pk = item.Key;
                 }
 
-                pk = pk.TrimEnd(',');
+                sb.AppendLine(" FROM " );
 
-                sb.AppendLine(" CONSTRAINT " + Table.TableName + "_PK PRIMARY KEY (" + pk + ") ");
+                sb.AppendLine(Table.OldTableName);
 
-                sb.AppendLine((")"));
+                sb.AppendLine(")");
 
                 cmd.CommandText = sb.ToString();
 

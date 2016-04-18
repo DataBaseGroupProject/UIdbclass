@@ -15,6 +15,8 @@ namespace dbclass2
 
         public string TableName { get; set; }
 
+        public string OldTableName { get; set; }
+
         public Dictionary<string, string> PrimaryKeys { get; set; }
 
         public Dictionary<string, string> Columns { get; set; }

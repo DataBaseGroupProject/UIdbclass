@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OracleClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,6 @@ namespace dbclass2
 {
     public partial class Form2 : Form
     {
-        OracleConnection con;
-
         public static void CreateOracleConnection()
         {
         }
