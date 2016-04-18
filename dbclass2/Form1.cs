@@ -50,12 +50,12 @@ namespace dbclass2
             checkedListBox3.CheckOnClick = true;
             checkedListBox3.HorizontalScrollbar = true;
 
-            InitializeMyControl();     
+            InitializeMyControl();
         }
 
         private void InitializeMyControl()
         {
-        }       
+        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -89,7 +89,18 @@ namespace dbclass2
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        public void LoadForm()
+        {
+            this.Hide();
+            frm.Show();
+
+           frm.DisplayListBox();
+
+
+}
+
+
+private void button2_Click(object sender, EventArgs e)
         {
             try
             {
@@ -138,12 +149,15 @@ namespace dbclass2
 
                 MessageBox.Show("Table " + tb.TableName + " Created Successfully.");
 
+                //DataAccess.InsertDimensionalTable(tb.TableName,listBox1,listBox2.Items);
+
                 ClearExistingTableInfoList();
                 ClearNewTableInfoList();
                 textBox4.Text = string.Empty;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                //Console.Out(ex.StackTrace);
                 MessageBox.Show("Failed to Create Table");
             }
         }
@@ -200,13 +214,12 @@ namespace dbclass2
 
         private void button4_Click(object sender, EventArgs e)
         {
-
-            this.Hide();
-            frm.Show();
+            LoadForm();
+           
 
             try
             {
-                if(FinalDimensionalTables.Count > 1)
+                if (FinalDimensionalTables.Count > 1)
                 {
                     FactTableInfo fact = new FactTableInfo();
 
@@ -232,26 +245,41 @@ namespace dbclass2
                     if (iRet == -1)
                         MessageBox.Show("Data Warehouse Created Successfully.");
 
-                    this.Hide();
-                    frm.Show();
+                   // LoadForm();
                 }
                 else
                 {
-                    if(checkedListBox1.SelectedItems.Count > 0)
+                    if (checkedListBox1.SelectedItems.Count > 0)
                     {
                         List<string> selectedTables = new List<string>();
 
-                        foreach(var item in checkedListBox1.SelectedItems)
-                            selectedTables.Add(item.ToString());
+                        foreach (var item in checkedListBox1.CheckedItems)
+                        {
+                            if (!selectedTables.Contains(item.ToString()))
+                                selectedTables.Add(item.ToString());
+                        }                     
 
                         int iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
-                        if(iRet == -1)
+                        if (iRet == -1)
+                        {
                             MessageBox.Show("Data Warehouse Created Successfully.");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please Select At least One Tables to Build the Data Warehouse.");
+
+                            iRet = DataAccess.LoadDataWarehouseDimensions(selectedTables);
+
+                            //iRet += DataAccess.LoadDataWarehouseDimensions(selectedTables);
+
+                            if (iRet == -1)
+                            {
+                                MessageBox.Show("Data Warehouse Data Loaded Successfully.");
+                            }
+
+                           // LoadForm();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Please Select At least One Tables to Build the Data Warehouse.");
+                        }
                     }
                 }
             }
@@ -271,6 +299,7 @@ namespace dbclass2
                 for (int i = 0; i < checkedListBox1.Items.Count; i++)
                 {
                     if (checkedListBox1.GetSelected(i) || checkedListBox1.GetItemChecked(i))
+                    //if (checkedListBox1.GetSelected(i))// checkedListBox1.GetItemChecked(i))
                     {
                         string tab = (string)checkedListBox1.Items[i];
                         results = DataAccess.GetPrimaryKey(tab);
@@ -309,7 +338,7 @@ namespace dbclass2
                 {
                     if (checkedListBox2.GetSelected(i) || checkedListBox2.GetItemChecked(i))
                     {
-                        if (!listBox1.Items.Contains(checkedListBox3.Items[i]))
+                        if (!listBox1.Items.Contains(checkedListBox2.Items[i]))
                         {
                             listBox1.Items.Add(checkedListBox2.Items[i]);
                         }
