@@ -191,7 +191,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name NOT LIKE 'Fact%'";
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name NOT LIKE '%FACT%'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -222,7 +222,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name LIKE 'Fact%'";
+                cmd.CommandText = "SELECT table_name FROM user_tables WHERE table_name LIKE '%_FACT%'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
