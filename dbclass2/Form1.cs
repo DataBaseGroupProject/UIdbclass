@@ -219,7 +219,6 @@ namespace dbclass2
 
         private void button4_Click(object sender, EventArgs e)
         {
-            LoadForm();
             try
             {
                 if (FinalDimensionalTables.Count > 1)
@@ -247,6 +246,8 @@ namespace dbclass2
 
                     if (iRet == -1)
                         MessageBox.Show("Data Warehouse Created Successfully.");
+
+                    LoadForm();
                 }
                 else
                 {
@@ -264,20 +265,18 @@ namespace dbclass2
 
                         int iRet = DataAccess.BuildDataWarhouse(selectedTables);
 
-                        if (iRet == -1)
+                        if (iRet != -99)
                         {
                             MessageBox.Show("Data Warehouse Created Successfully.");
 
-                            iRet = DataAccess.LoadDataWarehouseDimensions(selectedTables);
-
-                            //iRet += DataAccess.LoadDataWarehouseDimensions(selectedTables);
+                            //iRet = DataAccess.LoadDataWarehouseDimensions(selectedTables);
 
                             if (iRet == -1)
                             {
                                 MessageBox.Show("Data Warehouse Data Loaded Successfully.");
                             }
 
-                           // LoadForm();
+                            LoadForm();
                         }
                         else
                         {

@@ -58,7 +58,7 @@ namespace dbclass2
 
                 ConnectionInfo = Access;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;
@@ -154,7 +154,7 @@ namespace dbclass2
 
             try
             {
-                Connect();
+                Connect("Source");
 
                 OracleCommand cmd = new OracleCommand();
 
@@ -907,7 +907,7 @@ namespace dbclass2
                             }
                         }
 
-                        result += CreateDimenstionalTable(d);
+                        result += ManualCreateDimenstionalTable(table);
                     }
 
                     if(result == -1)
