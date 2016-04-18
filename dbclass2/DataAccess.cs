@@ -491,7 +491,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName + "'";
+                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName.ToUpper() + "'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -590,14 +590,12 @@ namespace dbclass2
         {
             int result = 0;
 
-            //string pk = string.Empty;
             StringBuilder ren_manseltab = new StringBuilder();
+
             string incr = "";
 
             try
             {
-                /*if (DoesTableExist(manseltab) > 0)
-                    return -99;*/
 
                 Connect();
 
@@ -606,23 +604,32 @@ namespace dbclass2
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
+
                 incr = num.ToString();
-                ren_manseltab.AppendFormat("MAN");
-                ren_manseltab.AppendFormat(manseltab);
-                //ren_manseltab.Append('-');
-                ren_manseltab.AppendFormat(incr);
+
+                ren_manseltab.Append(manseltab);
+
+                ren_manseltab.Append("_Man_Dim_");
+
+                ren_manseltab.Append(incr);
+
+                if (DoesTableExist(ren_manseltab.ToString()) > 0)
+                    return -99;
 
                 sb.AppendLine(("CREATE TABLE " + ren_manseltab + " AS "));
 
-                sb.AppendLine((" ( "));
+                sb.AppendLine(("("));
 
-                sb.AppendLine(("SELECT * FROM " + manseltab + ")"));
+                sb.AppendLine(("SELECT * FROM " + manseltab));
+
+                sb.AppendLine((")"));
 
                 cmd.CommandText = sb.ToString();
 
                 result = cmd.ExecuteNonQuery();
 
                 num++;
+
                 Close();
             }
             catch (Exception ex)
@@ -902,54 +909,11 @@ namespace dbclass2
                     fact.PrimaryKeys.Add("ID", "int");
 
                     foreach (var table in tables)
-                    {
-                        DimensionalTableInfo d = new DimensionalTableInfo();
-
-                        d.TableName = table + "_Dimensional";
-
-                        List<ColumnInfo> column = GetPrimaryKeyObject(table);
-
-                        column.RemoveAll(i => i.ConstraintType != "P");
-
-                        if (column.Count > 0)
-                        {
-                            d.PrimaryKeys = new Dictionary<string, string>();
-
-                            foreach(var key in column)
-                            {
-                                if(!d.PrimaryKeys.ContainsKey(key.Name))
-                                    d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
-
-                                if (!fact.Columns.ContainsKey(key.Name))
-                                    fact.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
-
-                                if (!fact.Relations.ContainsKey(table))
-                                    fact.Relations.Add(table, key.Name);
-                            }
-                        }
-
-                        column = GetNonKeyObject(table);
-
-                        if (column.Count > 0)
-                        {
-                            d.Columns = new Dictionary<string, string>();
-
-                            foreach (var key in column)
-                            {
-                                if(!d.Columns.ContainsKey(key.Name))
-                                {
-                                    if(key.DataType.ToLower() == "date")
-                                        d.Columns.Add(key.Name, key.DataType);
-                                    else
-                                        d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
-                                }
-                            }
-                        }
-
-                        result += CreateDimenstionalTable(d);
+                    {                     
+                        result += ManualCreateDimenstionalTable(table);
                     }
 
-                    if(result == -1)
+                    if (result != -99)
                     {
                         result = CreateFactTable(fact);
                     }
