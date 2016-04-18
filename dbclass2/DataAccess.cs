@@ -527,22 +527,8 @@ namespace dbclass2
         public static int CreateDimenstionalTable(DimensionalTableInfo Table)
         {
             int result = 0;
-            //string result = "";
 
             string pk = string.Empty;
-
-            //Table = new DimensionalTableInfo();
-
-            //Table.TableName = "DOC";
-
-            //Table.PrimaryKeys = new Dictionary<string, string>();
-
-            //Table.PrimaryKeys.Add("PID", "Int");
-
-            //Table.Columns = new Dictionary<string, string>();
-
-            //Table.Columns.Add("Col1", "Int");
-            //Table.Columns.Add("Col2", "Varchar(50)");
 
             try
             {
