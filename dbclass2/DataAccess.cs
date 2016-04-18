@@ -390,24 +390,14 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
+                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length, cons.constraint_type
 
-                string query = (@"SELECT DISTINCT
-                                        ucc.table_name
-                                        , ucc.column_name
-                                        , uc.constraint_type
-                                        , AllColumns.nullable
-                                        , AllColumns.data_length
-                                        , AllColumns.data_type
-      
-                                    FROM user_cons_columns   ucc
-                                        ,user_constraints    uc
-                                        ,all_tab_columns AllColumns
-      
-                                    WHERE ucc.constraint_name = uc.constraint_name
-                                    AND ucc.table_name      = uc.table_name
-                                    AND AllColumns.column_name = ucc.column_name
-                                    AND (uc.constraint_type  = 'P'  OR uc.constraint_type = 'U' OR uc.constraint_type = 'R')
-                                    AND uc.table_name = " + "'" + tabname.ToUpper() + "'");
+                                  FROM all_tab_columns AllColumns
+                                  JOIN all_cons_columns Cols ON AllColumns.column_name = cols.column_name
+                                  JOIN all_constraints Cons ON cons.constraint_name = cols.constraint_name AND cons.owner = cols.owner
+                                  
+                                  WHERE (cons.constraint_type = 'P' OR Cons.constraint_type = 'U') AND (AllColumns.nullable = 'N') 
+                                        And AllColumns.table_name = " + "'" + tabname + "'");
 
                 cmd.CommandText = query;
 
@@ -422,53 +412,6 @@ namespace dbclass2
                     obj.IsNull = reader["nullable"].ToString();
                     obj.DataLength = reader["data_length"].ToString();
                     obj.ConstraintType = reader["constraint_type"].ToString();
-                    obj.TransTable = tabname;
-
-                    result.Add(obj);
-                }
-
-                Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return result;
-        }
-
-        public static List<ColumnInfo> GetAllColumnsObject(string tabname)
-        {
-            List<ColumnInfo> result = new List<ColumnInfo>();
-
-            string selectedtable = tabname;
-
-            try
-            {
-                Connect();
-
-                OracleCommand cmd = new OracleCommand();
-
-                cmd.Connection = con;
-
-                string query = (@"SELECT DISTINCT AllColumns.column_name, AllColumns.data_type, AllColumns.nullable, AllColumns.data_length
-
-                                  FROM all_tab_columns AllColumns
-                                                                    
-                                  WHERE AllColumns.table_name = " + "'" + tabname + "'");
-
-                cmd.CommandText = query;
-
-                OracleDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    ColumnInfo obj = new ColumnInfo();
-
-                    obj.Name = reader["column_name"].ToString();
-                    obj.DataType = reader["data_type"].ToString();
-                    obj.IsNull = reader["nullable"].ToString();
-                    obj.DataLength = reader["data_length"].ToString();
                     obj.TransTable = tabname;
 
                     result.Add(obj);
@@ -501,7 +444,7 @@ namespace dbclass2
 
                 cmd.Connection = con;
 
-                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName.ToUpper() + "'";
+                cmd.CommandText = "SELECT table_name FROM user_tables Where table_name = '" + tableName + "'";
 
                 OracleDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -600,12 +543,14 @@ namespace dbclass2
         {
             int result = 0;
 
+            //string pk = string.Empty;
             StringBuilder ren_manseltab = new StringBuilder();
-
             string incr = "";
 
             try
             {
+                /*if (DoesTableExist(manseltab) > 0)
+                    return -99;*/
 
                 Connect();
 
@@ -614,32 +559,23 @@ namespace dbclass2
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
-
                 incr = num.ToString();
-
-                ren_manseltab.Append(manseltab);
-
-                ren_manseltab.Append("_Man_Dim_");
-
-                ren_manseltab.Append(incr);
-
-                if (DoesTableExist(ren_manseltab.ToString()) > 0)
-                    return -99;
+                ren_manseltab.AppendFormat("MAN");
+                ren_manseltab.AppendFormat(manseltab);
+                //ren_manseltab.Append('-');
+                ren_manseltab.AppendFormat(incr);
 
                 sb.AppendLine(("CREATE TABLE " + ren_manseltab + " AS "));
 
-                sb.AppendLine(("("));
+                sb.AppendLine((" ( "));
 
-                sb.AppendLine(("SELECT * FROM " + manseltab));
-
-                sb.AppendLine((")"));
+                sb.AppendLine(("SELECT * FROM " + manseltab + ")"));
 
                 cmd.CommandText = sb.ToString();
 
                 result = cmd.ExecuteNonQuery();
 
                 num++;
-
                 Close();
             }
             catch (Exception ex)
@@ -672,7 +608,7 @@ namespace dbclass2
                 cmd.Connection = con;
 
                 StringBuilder sb = new StringBuilder();
-                StringBuilder selectcolssb = new StringBuilder();
+                StringBuilder selectcolssb = new StringBuilder(); 
                 StringBuilder selecttabssb = new StringBuilder();
                 List<string> selectpkcollists = new List<string>();
                 List<string> selectnpkcollists = new List<string>();
@@ -892,7 +828,7 @@ namespace dbclass2
 
                 Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -932,9 +868,9 @@ namespace dbclass2
                         {
                             d.PrimaryKeys = new Dictionary<string, string>();
 
-                            foreach (var key in column)
+                            foreach(var key in column)
                             {
-                                if (!d.PrimaryKeys.ContainsKey(key.Name))
+                                if(!d.PrimaryKeys.ContainsKey(key.Name))
                                     d.PrimaryKeys.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
 
                                 if (!fact.Columns.ContainsKey(key.Name))
@@ -953,9 +889,9 @@ namespace dbclass2
 
                             foreach (var key in column)
                             {
-                                if (!d.Columns.ContainsKey(key.Name))
+                                if(!d.Columns.ContainsKey(key.Name))
                                 {
-                                    if (key.DataType.ToLower() == "date")
+                                    if(key.DataType.ToLower() == "date")
                                         d.Columns.Add(key.Name, key.DataType);
                                     else
                                         d.Columns.Add(key.Name, key.DataType + "(" + key.DataLength + ")");
@@ -963,16 +899,16 @@ namespace dbclass2
                             }
                         }
 
-                        result += ManualCreateDimenstionalTable(table);
+                        result += CreateDimenstionalTable(d);
                     }
 
-                    if (result != -99)
+                    if(result == -1)
                     {
                         result = CreateFactTable(fact);
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 throw;
